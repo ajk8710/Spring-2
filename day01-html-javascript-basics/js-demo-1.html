@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>First JS Code</title>
+        <script>
+            alert("Hi");
+            console.log("log texts to console");
+
+            var num1 = parseInt(prompt("Enter first num: "));
+            var num2 = parseInt(prompt("Enter second num: "));
+
+            var choice = "no";
+            do {
+                var option = prompt("Enter the name of operation: add/sub/mul/div");
+                switch (option) {
+                    case "add": alert("Add: " + (num1 + num2)); break;
+                    case "sub": alert("Sub: " + (num1 - num2)); break;
+                    case "mul": alert("Mul: " + (num1 * num2)); break;
+                    case "div": alert("Div: " + (num1 / num2));
+                }
+                
+                choice = prompt("Do more operation? yes/no: ")
+            } while (choice == "yes" || choice == "y");
+            
+        </script>
+    </head>
+
+    <body>
+        <h2> It's first JS code </h2>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>First JS Code</title>
+        <script>
+            var varOutFunc = "var outside function";
+
+            function f1() {
+                {
+                    var varInFunc = "var inside function";
+                    let letVal = "let encapsulated in block";
+                }
+                alert("Var is Functional Scope: " + varOutFunc);
+                alert("Var is Functional Scope: " + varInFunc);
+                alert("Let is Block Scope: " + letVal);  // not printing
+            }
+            
+            f1();
+            alert("Var is Functional Scope: " + varInFunc);  // not printing
+            
+        </script>
+    </head>
+
+    <body>
+        <h2> It's first JS code </h2>
+    </body>
+</html>

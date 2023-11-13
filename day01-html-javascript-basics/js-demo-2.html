@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>First JS Code</title>
+        <script>
+
+            var num1 = parseInt(prompt("Enter first num: "));
+            var num2 = parseInt(prompt("Enter second num: "));
+
+            var choice = "no";
+            do {
+                var option = prompt("Enter the name of operation: add/sub/mul/div");
+                switch (option) {
+                    case "add": alert("Add: " + add(num1, num2)); break;
+                    case "sub": alert("Sub: " + sub(num1, num2)); break;
+                    case "mul": alert("Mul: " + mul(num1, num2)); break;
+                    case "div": alert("Div: " + div(num1, num2));
+                }
+                
+                choice = prompt("Do more operation? yes/no: ")
+            } while (choice == "yes" || choice == "y");
+            
+            function add(num1, num2) {
+                return num1 + num2;
+            }
+
+            function sub(num1, num2) {
+                return num1 - num2;
+            }
+
+            function mul(num1, num2) {
+                return num1 * num2;
+            }
+
+            function div(num1, num2) {
+                return num1 / num2;
+            }
+        </script>
+    </head>
+
+    <body>
+        <h2> It's first JS code </h2>
+    </body>
+</html>
