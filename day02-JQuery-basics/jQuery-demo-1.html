@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        // Refer html tags by 1. id (#), 2. class (.) 3. tag name if only one of such type exists.
+        // $ sign is shortcut way of writing jQuery.
+
+        /*
+        $(document).ready(function() {  // run this function when dom is ready
+            $("#btn1").click(function() {  // run this function when btn1 is clicked
+                var txt1 = $("#txt1").val(); // refer id by preceding #
+                var txt2 = $("#txt2").val();
+                $("#txt2").val(txt1);  // assign to txt2
+                $("#txt1").val(txt2);
+            });
+        });
+        */
+
+        $(document).ready(function() {  // run this function when dom is ready
+            $("#btn1").click(function() {  // run this function when btn1 is clicked
+                var txt1 = $("#txt1").val(); // refer id by preceding #
+                var txt2 = $(".txt2").val();  // refer class by preceding .
+                $(".txt2").val(txt1);  // assign
+                $("#txt1").val(txt2);
+            });
+        });
+        // if there is only one button, you can replace "#btn1" with "input[type='button']"
+    </script>
+    </head>
+
+    <body>
+        <input type="text" id="txt1">
+        <input type="text" class="txt2">
+        <input type="button" id="btn1" value="swap texts">
+    </body>
+</html>

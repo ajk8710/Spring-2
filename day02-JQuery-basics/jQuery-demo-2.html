@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {  // run this function when dom is ready
+            $("#btn1").click(function() {  // run this function when btn1 is clicked
+                alert($("p").text());  // Refering tag name p. Extract text only.
+                alert($("p").html());  // Refering tag name p. Extract html codes.
+            });
+        });
+    </script>
+    </head>
+
+    <body>
+        <input type="button" id="btn1" value="print it">
+        <p><a href="#">Print Me</a></p>
+    </body>
+</html>

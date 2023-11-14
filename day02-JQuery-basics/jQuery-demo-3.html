@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            $("#show").click(function() {
+                $("p").show();
+            });
+            $("#hide").click(function() {
+                $("p").hide();
+            })
+            $("#up").click(function() {
+                $("p").slideUp("fast");
+            })
+            $("#down").click(function() {
+                $("p").slideDown();
+            })
+            $("#in").click(function() {
+                $("p").fadeIn("fast");
+            })
+            $("#out").click(function() {
+                $("p").fadeOut("slow");
+            })
+        });
+    </script>
+    </head>
+
+    <body>
+        <p>Magic Trick</p>
+        <input type="button" id="show" value="Show">
+        <input type="button" id="hide" value="Hide"><br>
+        <input type="button" id="up" value="Slide Up">
+        <input type="button" id="down" value="Slide Down"><br>
+        <input type="button" id="in" value="Fade In">
+        <input type="button" id="out" value="Fade Out">
+    </body>
+</html>
