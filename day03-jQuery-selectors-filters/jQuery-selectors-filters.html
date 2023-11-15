@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+
+        // if even or odd index, starting from 0
+        $(document).ready(function() {
+            $("li:even").click(function() {
+                alert($(this).text());
+            })
+        });
+
+        // first or last element of group
+        $(document).ready(function() {
+            $("li:first").click(function() {
+                alert("First");
+            })
+        });
+
+        // has specified tag
+        $(document).ready(function() {
+            $("li:has(a)").click(function() {
+                alert("Has a");
+            })
+        });
+
+        // selected element contains text
+        $(document).ready(function() {
+            $("li:contains(Cheese)").click(function() {
+                alert("Contains Cheese");
+            })
+        });
+    </script>
+    </head>
+
+    <body>
+        <ul>
+            <li>Cheese Burger</li>
+            <li>Cheese Pizza</li>
+            <li>Fried Chicken</li>
+            <li>Grilled Chicken</li>
+            <li><a>Grilled Sandwich</a></li>
+        </ul>
+    </body>
+</html>

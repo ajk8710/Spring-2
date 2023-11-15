@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+
+            // Descendant selector (space)
+            /*
+            $('h1 a').click(function() {  // a that is descendant of h1
+                alert($(this).text());  // this: current element that is selected
+            })
+            */
+            
+            // Child selector (>)
+            $('h1 > a').click(function() {  // a that is direct child of h1
+                alert($(this).text());
+            })
+
+            // Attribute selector ([]): select all such tag with specified attribute 
+            $("input[type='text']").click(function() {  // all text boxes (all input tag where type is text)
+                alert("I'm a text box");
+                return false;  // prevent default behavior (redirect)
+            })
+
+            $("img[alt]").click(function() {  // all image with alt attribute
+                alert("I'm an image with alt attribute");
+                return false;  // prevent default behavior (redirect)
+            })
+            
+            // Starts-With selector (^=)
+            $("a[href^='https:']").click(function() {  // all a with href that starts with 'https:'
+                alert($(this).text());
+                return false;  // prevent default behavior (redirect)
+            })
+        });
+    </script>
+    </head>
+
+    <body>
+        <p><h1><a>Direct child of h1</a></h1></p>
+        <h1><p><a>Grandchild of h1</a></p></h1>
+        <input type="text"/>
+        <input type="text"/><br>
+        <img src="Grapes.jpg" height="100" width="100" alt="Image of Grape"/><br>
+        <a href="https:\\www.google.com">Google</a>
+    </body>
+</html>
