@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Second JS Code</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        // JQuery: Create & select dynamically generated element: Adding/Removing rows in a table
+
+        $(document).ready(function() {
+            $("#add").click(function() {
+                var fName = $("#fName").val();
+                var lName = $("#lName").val();
+                var age = $("#age").val();
+                // Row has generated dynamically.
+                // id cannot be duplicated. So use class.
+                $("#tbl").append("<tr><td> " + fName + "</td><td>" + lName + "</td>"
+                    + "<td>" + age + "</td><td><a href='#' class='remove'>Remove</a></td></tr>");
+                $("#fName").val("");  // reset contents of text box
+                $("#lName").val("");
+                $("#age").val("");
+            })
+        
+        // Can’t select dynamically generated element directly. So bind event using "on".
+        // .on(name of event, name of class)
+        // Of table, on click event of remove class,
+        // this = anchor tag which is clicked upon
+        // Remove parent (tr) of parent (td) of this (anchor)
+        $("#tbl").on("click", ".remove", function() {  
+            $(this).parent().parent().remove();
+            return false;  // prevent default behavior of anchor tag (redirecting)
+        });
+    });
+    </script>
+    </head>
+
+    <body>
+        First Name: <input type="text" id="fName"/><br>
+        Last Name: <input type="text" id="lName"/><br>
+        Age: <input type="text" id="age"/><br>
+        <input type="button" id="add" value="Add"/><br>
+
+        <table id="tbl" border="1">
+            <tr><th>First</th><th>Last</th><th>Age</th><th>Remove</th></tr>
+        </table>
+    </body>
+</html>
