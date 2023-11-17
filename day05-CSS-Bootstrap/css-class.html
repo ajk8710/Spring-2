@@ -1,0 +1,43 @@
+<html>
+    <head>  
+        <title>CSS</title>
+        <style>
+            .yellow {
+                background: yellowgreen;
+            }
+
+            p {
+                font-family: verdana;
+                font-size: 20px;
+            }
+
+            p.yellow {
+                background: yellow;
+            }
+
+            input {
+                background: orange;
+            }
+
+            input.green{
+                background: green;
+            }
+
+            .blue {
+                background: blue;
+            }
+        </style>
+    </head>
+
+    <body>
+        Hello
+        <h6 class="yellow">Hello</h6>  <!-- .yellow: anything that is yellow class -->
+        <p>Hello</p>                   <!-- p: any p tag -->
+        <p class="yellow">Hello</p>    <!-- p.yellow: any p tag that is yellow class -->
+
+        <input type="text"/>  <!-- input: any input tag -->
+        <input type="text" class="green"/>  <!-- input.green: any input tag that is green class-->
+        <input type="button" value="Button"/>  <!-- input: any input tag -->
+        <input type="button" class="blue" value="Button"/>  <!-- .blue: anything that is blue class -->
+    </body>
+</html>
