@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title>Calculator Practice</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function() {
+            var num1 = "";
+            var num2 = "";
+            var result = 0;
+            var operator;
+            var operatorChosen = false;
+
+            $(".digit").click(function() {
+
+                if (!operatorChosen) {
+                    // num1 += $("#" + this.id).val();
+                    // num1 += this.id // id == val anyways
+                    num1 += this.value;
+                    $("#num1").text("Num1: " + num1);  // assign text of p tag with id=num1
+                }
+                else {
+                    num2 += this.value;
+                    $("#num2").text("Num2: " + num2);
+                }
+            });
+
+            $(".operator").click(function() {
+                operatorChosen = true;
+
+                if (this.value === "=") {
+                    switch (operator) {
+                        case "+": 
+                            result = parseInt(num1) + parseInt(num2);
+                            break;
+                        case "-": 
+                            result = parseInt(num1) - parseInt(num2);
+                            break;
+                        case "*": 
+                            result = parseInt(num1) * parseInt(num2);
+                            break;
+                        case "/": 
+                            result = parseInt(num1) / parseInt(num2);
+                    }
+                    $("#result").text("Result: " + result);
+                }
+                else if (this.value === "clear") {
+                    num1 = "";
+                    num2 = "";
+                    result = 0;
+                    $("#num1").text("Num1: " + num1);
+                    $("#num2").text("Num2: " + num2);
+                    $("#result").text("Result: " + result);
+                    operatorChosen = false;
+                    $("#operatorSymbol").text("Operator:");
+                }
+                else {
+                    operator = this.value;
+                    $("#operatorSymbol").text("Operator: " + operator);
+                }
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <p id="num1">Num1:</p>
+    <p id="operatorSymbol">Operator:</p>
+    <p id="num2">Num2:</p>
+    <p id="result">Result:</p>
+    <input type="button" id="1" class="digit" value="1"/>
+    <input type="button" id="2" class="digit" value="2"/>
+    <input type="button" id="3" class="digit" value="3"/><br>
+    <input type="button" id="4" class="digit" value="4"/>
+    <input type="button" id="5" class="digit" value="5"/>
+    <input type="button" id="6" class="digit" value="6"/><br>
+    <input type="button" id="7" class="digit" value="7"/>
+    <input type="button" id="8" class="digit" value="8"/>
+    <input type="button" id="9" class="digit" value="9"/><br>
+    <input type="button" id="0" class="digit" value="0"/>
+    <input type="button" id="clear" class="operator" value="clear"/><br>
+    <input type="button" id="add" class="operator" value="+"/>
+    <input type="button" id="sub" class="operator" value="-"/>
+    <input type="button" id="mul" class="operator" value="*"/>
+    <input type="button" id="div" class="operator" value="/"/>
+    <input type="button" id="is" class="operator" value="="/>
+</body>
+</html>
