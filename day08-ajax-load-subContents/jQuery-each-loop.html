@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>jQuery Loop: each</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    // "each" executes on each specified tag.
+    $(document).ready(function() {
+        $("li").each(function() {
+            alert($(this).text());
+        })
+    });
+</script>
+</head>
+
+<body>
+    Hello
+    <ul>
+        <li><a href="#">Cheese Burger</a></li>  <!-- Without #, it refreshes or redirects upon clicking -->
+        <li>Cheese Pizza</li>
+        <li><b>Fried Chicken</b></li>
+        <li>Grilled Chicken</li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>Ajax</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    // Unlike Javascript, Ajax does not need to redirect to another html to get data from server.
+    // (Display new html content without reloading the page.)
+    // Ajax needs server to perform: Put html files in tomcat/webapps/ROOT folder & run tomcat server.
+
+    $(document).ready(function() {
+        $("#main a").click(function() {  // when anchor tag within main div is clicked, run this function
+            var url = $(this).attr("href");  // url = this tag's href
+            $("#subContent").load(url)  // load it on subContent
+            return false;  // prevent default behavior of redirecting
+        })
+    });
+</script>
+</head>
+
+<body>
+    <div id="main">
+        <h1>Main Content</h1>
+        <a href="ajax-sub1.html">Link for Sub1</a> <a href="ajax-sub2.html">Link for Sub2</a>
+        <div id="subContent"></div>
+    </div>
+</body>
+</html>
