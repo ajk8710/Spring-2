@@ -1,0 +1,6 @@
+{
+    "id": 1,
+    "name": "Pikachu",
+    "isMarried": false,
+    "friendList": [{"name": "Raichu"}, {"name": "Squirtle"}, {"name": "Charmander"}]
+}

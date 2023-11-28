@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Ajax</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    // Ajax get method
+    // $.get(URL, callback);
+    // URL to send get request. Callback method to run if get request succeeds.
+
+    $(document).ready(function() {
+        $("#fetch").click(function() {  // when button is clicked run this function
+
+            $.get("user.json", function(responseText) {  // GET request to json, function gets response
+                $("#uid").val(responseText.id);  // set the values of input texts with response
+                $("#nam").val(responseText.name);
+                $("#married").val(responseText.isMarried);
+
+                // $.each differ from $(selector).each() which iterate over jQuery object (specified tag).
+                // $.each iterates over any collection, object or array.
+                // $.each(collection, function(index, value)))
+                $.each(responseText.friendList, function(key, value) {  // index, value or key, value
+                    $("ul").append("<li>" + value.name + "</li>");
+                });
+            });
+        });
+    });
+</script>
+</head>
+
+<body>
+    id: <input type="text" id="uid"/>
+    name: <input type="text" id="nam"/>
+    isMarried: <input type="text" id="married"/>
+
+    <ul>
+
+    </ul>
+
+    <input type="button" value="Fetch JSON" id="fetch"/>
+</body>
+</html>
