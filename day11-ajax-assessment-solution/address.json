@@ -1,0 +1,5 @@
+{    
+    "1" : {"houseNo": 123, "city": "Yellow City", "province": 10, "country": "USA", "phone": 123},
+    "2" : {"houseNo": 234, "city": "Gold City", "province": 11, "country": "Canada", "phone": 1234},
+    "3" : {"houseNo": 345, "city": "Red City", "province": 12, "country": "Mexico", "phone": 1235}
+}
