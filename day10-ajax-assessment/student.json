@@ -1,0 +1,7 @@
+{
+    "studentList" : [
+        {"id": 1, "name": "Pikachu", "age": 18},
+        {"id": 2, "name": "Squirtle", "age": 21},
+        {"id": 3, "name": "Charmander", "age": 23}
+    ]
+}
