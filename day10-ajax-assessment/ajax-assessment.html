@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>Ajax Assessment</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    // Display the details of student fetched from a JSON file student.json on the load of HTML file.
+    // On the click of Remove link delete the record from the table.
+
+    // On the click of View Address link,
+    // make an ajax call and retrieve the address of the selected student from another json file Address.json and display in another form with textfields.
+
+    $(document).ready(function() {
+        
+        // $.get(URL, function to run if succeeds);
+        $.get("student.json", function(res) {  // get response from json
+
+            // $.each(collection, function(indexOrKey, value)))
+            $.each(res.studentList, function(idx, value) {  // for each student, append to table
+                $("#tbl").append("<tr>" + "<td>"+ value.id + "</td>" + "<td>"+ value.name + "</td>" + "<td>"+ value.age + "</td>"
+                    + "<td> <a href='#' class='remove'>Remove</a> </td>" + "<td> <a href='addressField.html' value=" + value.id + " class='address'>View Address</a> </td>" + "</tr>")
+            })
+        });
+
+        // Can’t select dynamically generated element directly. So bind event using "on".
+        // (Their id & class is same. Need "this" to refer what is selected.)
+        // .on(name of event, name of class)
+        // Of table, on click event of remove class,
+        // this = anchor tag which is clicked upon
+        // Remove parent (tr) of parent (td) of this (anchor)
+        $("#tbl").on("click", ".remove", function() {  
+            $(this).parent().parent().remove();
+            return false;  // prevent default behavior of anchor tag (redirecting)
+        });
+        
+        $("#tbl").on("click", ".address", function() {  
+            //var url = $(this).attr("href");  // url = this tag's href
+            //$("#addressField").load(url)  // load it on subContent
+
+            var id = $(this).attr("value");
+            $.get("address.json", function(res) {
+                $.each(res, function(key, value) {
+                    if (key == id) {
+                        $("#houseNo").val(value.houseNo);
+                        $("#city").val(value.city);
+                        $("#province").val(value.province);
+                        $("#country").val(value.country);
+                        $("#phone").val(value.phone);
+                    }
+                });
+            });
+
+            return false;  // prevent default behavior of redirecting
+        });
+    });
+</script>
+
+</head>
+
+<body>
+    <table id="tbl" border="1">
+        <tr> <th>ID</th> <th>Name</th> <th>Age</th> <th>Remove</th> <th>Address</th> </tr>
+    
+        <div id="addressField"></div>
+
+        House No: <input type="text" id="houseNo"/><br>
+        City: <input type="text" id="city"/><br>
+        Province: <input type="text" id="province"/><br>
+        Country: <input type="text" id="country"/><br>
+        Phone No: <input type="text" id="phone"/><br>
+</body>
+</html>
