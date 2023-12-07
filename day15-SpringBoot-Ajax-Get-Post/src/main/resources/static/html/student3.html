@@ -1,0 +1,131 @@
+<html>
+<head>
+<script src="../js/jquery-1.7.2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        
+        // Get studentList from controller and append students to table.
+        $.get("/getAllStudents", function(res) {
+            $.each(res, function(idx, student) {
+                $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>"+ student.age + "</td>"
+                    + "<td> <a href='#' id=" + student.id + " class='remove'>Remove</a> </td>"
+                    + "<td> <a href='#' sid=" + student.id + " class='address'>View Address</a> </td>" + "</tr>");
+                    // id cannot be duplicated on html. Name it sid.
+            });
+        });
+        
+        // Upon click of remove, delete student from table (UI), also from server (controller's studentList).
+        // .on(name of event, name of class, function to run)
+        $("#tbl").on("click", ".remove", function() {
+            $(this).parent().parent().remove();  // remove row (on UI)
+            alert("Removed ID: " + this.id);
+            
+            // var student = {"id": this.id};  // create student with just id
+            // Instead of Request Body, I'm using Path Variable this time.
+            var sid = this.id;
+            
+            // Delete request to url deleteStudent2
+            $.ajax({
+                type: "DELETE",
+                contentType: "application/json",  // type of response I expect
+                // url: "http://localhost:8082/deleteStudent2",
+                url: "http://localhost:8082/deleteStudent3/" + sid,
+                // data: JSON.stringify(student),  // data that I'm sending. (convert javascript object to json string)
+                // dataType: "json",  // type of data I'm sending
+            });  // end ajax
+            
+            return false;  // prevent default behavior of anchor tag (redirecting)
+        });  // end on click remove
+        
+        // Upon click of view address, populate address of student on textbox.
+        $("#tbl").on("click", ".address", function() {
+            // var params = {"id": $(this).attr("sid")};  // params id=sid, whatEverElse=else...
+            // Instead of Request Param, I'm using Path Variable this time.
+            var sid = $(this).attr("sid");
+            
+            // Get with sending data? Sent through url param.
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",  // type of response I expect
+                // url: "http://localhost:8082/getStudentAdd2",  // I could do getStudentAdd2=id + "sid" for request param
+                url: "http://localhost:8082/getStudentAdd3/" + sid,
+                // data: params,  // sending as request param /getStudentAdd2?id=
+                // dataType: "json",
+                success: function(res) {  // upon success, fill the textbox
+                    // var address = res.address;
+                    var address = res;
+                    $("#houseNo").val(address.houseNo);
+                    $("#city").val(address.city);
+                    $("#province").val(address.province);
+                    $("#country").val(address.country);
+                    $("#phone").val(address.phone);
+                },
+                error: function(e) {}
+            });  // end ajax
+            
+            return false;  // prevent default behavior of anchor tag (redirecting)
+        });  // end on click address
+        
+        // Upon click of button, do post request
+        $("#postStudentBtn").click(function() {
+            // get the values from text fields, create json student.
+            var id = $("#sid").val();
+            var name = $("#sname").val();
+            var age = $("#sage").val();
+            
+            var houseNo = $("#houseNo").val();
+            var city = $("#city").val();
+            var province = $("#province").val();
+            var country = $("#country").val();
+            var phone = $("#phone").val();
+            var student = {"id": id, "name": name, "age": age,
+            address: {"houseNo": houseNo, "city": city, "province": province, "country": country, "phone": phone}};
+            
+            // Post request to url postStudent
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",  // type of response I expect
+                url: "http://localhost:8082/addStudent3",
+                data: JSON.stringify(student),  // parse javascript object to json string
+                dataType: "json",  // type of data I'm sending
+                success: function(res) {  // upon success of post request, run this function which takes response. Response is list of students.
+                    $("#tbl tr:not(:first)").remove();  // remove all but first row which is table header
+                    $.each(res, function(idx, student) {
+                        $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>"+ student.age + "</td>"
+                            + "<td> <a href='#' id=" + student.id + " class='remove'>Remove</a> </td>"
+                            + "<td> <a href='#' sid=" + student.id + " class='address'>View Address</a> </td>" + "</tr>");
+                    });
+                },
+                error: function(e) {}
+            });  // end ajax post
+        });  // end post button click
+    
+    });  // end dom.ready
+</script>
+</head>
+
+<body>
+    <div class="container">
+    <div class="row">
+    <div class="col-12">
+    ID: <input type="text" id="sid"/>
+    Name: <input type="text" id="sname"/>
+    Age: <input type="text" id="sage"/>
+    <br>
+    House No: <input type="text" id="houseNo"/><br>
+    City: <input type="text" id="city"/><br>
+    Province: <input type="text" id="province"/><br>
+    Country: <input type="text" id="country"/><br>
+    Phone No: <input type="text" id="phone"/><br>
+    
+    <input type="button" id="postStudentBtn" value="Add Student"/>
+    
+    <h1>Student Table</h1>
+    <table id="tbl" class="table table-striped">
+        <tr> <th>ID</th><th>Name</th><th>Age</th><th>Remove</th><th>Address</th> </tr>
+    </table>
+    </div></div></div>
+</body>
+</html>
