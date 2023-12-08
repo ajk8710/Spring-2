@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../js/jquery-1.7.2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        
+        // Get request to url getStudent. getStudent returns json response.
+        $.get("/getStudent", function(res) {  // Slash indicates it is url, not html file.
+            $("#sid").val(res.id);
+            $("#sname").val(res.name);
+            $("#sage").val(res.age);
+        });
+		
+		// Get request to url getStudents. getStudents returns list of students.
+		$.get("/getStudents", function(res) {
+            $.each(res, function(idx, student) {
+                $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>" + student.age + "</td>" + "</tr>");
+            });
+        });
+		
+		// Upon click of button, do post request
+        $("#postStudentBtn").click(function() {
+            
+            // get the values from text fields, create json student.
+            var id = $("#sid").val();
+            var name = $("#sname").val();
+            var age = $("#sage").val();
+            var student = {"id": id, "name": name, "age": age};
+            
+            // Post request to url postStudent
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",  // type of response I expect
+                url: "http://localhost:8082/postStudent",
+                data: JSON.stringify(student),  // parse javascript object to json string
+                dataType: "json",  // type of data I'm sending
+                success: function(res) {  // upon success of post request, run this function which takes response. Response is list of students.
+                    $("#tbl tr:not(:first)").remove();  // remove all but first row which is table header
+                    $.each(res, function(idx, student) {
+                        $("#tbl").append("<tr>" + "<td>"+ student.id +"</td>" + "<td>"+ student.name +"</td>" + "<td>"+ student.age +"</td>" + "</tr>")
+                    });
+                },
+                error: function(e) {}
+            });  // end ajax post
+        });  // end post button click
+        
+    });  // end dom.ready
+</script>
+</head>
+
+<body>
+    ID: <input type="text" id="sid"/>
+    Name: <input type="text" id="sname"/>
+    Age: <input type="text" id="sage"/>
+    
+    <input type="button" id="postStudentBtn" value="Add Student"/>
+    
+    <h1>Student Table</h1>
+    <table id="tbl" border="1">
+        <tr> <th>ID</th><th>Name</th><th>Age</th> </tr>
+    </table>
+</body>
+</html>
