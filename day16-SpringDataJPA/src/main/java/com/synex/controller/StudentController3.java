@@ -24,13 +24,14 @@ public class StudentController3 {
     }
     
     @RequestMapping(value="addStudent3", method=RequestMethod.POST)
-    public StudentD addStudent(@RequestBody StudentD student) {
-        return studentService.addStudent(student);
+    public List<StudentD> addStudent(@RequestBody StudentD student) {
+        studentService.addStudent(student);
+        return studentService.getAllStudents();
     }
     
-    @RequestMapping(value="deleteStudent3/{studentId}", method=RequestMethod.DELETE)
-    public void removeStudent(@PathVariable int studentId) {
-        studentService.removeStudent(studentId);
+    @RequestMapping(value="deleteStudent3/{studentId}/{addressId}", method=RequestMethod.DELETE)
+    public void removeStudent(@PathVariable int studentId, @PathVariable int addressId) {
+        studentService.removeStudent(studentId, addressId);
     }
     
     @RequestMapping(value="getStudentAdd3/{studentId}", method=RequestMethod.GET)

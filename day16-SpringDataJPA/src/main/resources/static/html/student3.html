@@ -10,7 +10,7 @@
         $.get("/getAllStudents", function(res) {
             $.each(res, function(idx, student) {
                 $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>"+ student.age + "</td>"
-                    + "<td> <a href='#' id=" + student.id + " class='remove'>Remove</a> </td>"
+                    + "<td> <a href='#' id=" + student.id + " aid=" + student.address.id + " class='remove'>Remove</a> </td>"
                     + "<td> <a href='#' sid=" + student.id + " class='address'>View Address</a> </td>" + "</tr>");
                     // id cannot be duplicated on html. Name it sid.
             });
@@ -20,18 +20,19 @@
         // .on(name of event, name of class, function to run)
         $("#tbl").on("click", ".remove", function() {
             $(this).parent().parent().remove();  // remove row (on UI)
-            alert("Removed ID: " + this.id);
+            alert("Removed Student ID: " + this.id + ", Address ID: " + $(this).attr("aid"));
             
             // var student = {"id": this.id};  // create student with just id
             // Instead of Request Body, I'm using Path Variable this time.
             var sid = this.id;
+            var aid = $(this).attr("aid");
             
             // Delete request to url deleteStudent2
             $.ajax({
                 type: "DELETE",
                 contentType: "application/json",  // type of response I expect
                 // url: "http://localhost:8082/deleteStudent2",
-                url: "http://localhost:8082/deleteStudent3/" + sid,
+                url: "http://localhost:8082/deleteStudent3/" + sid + "/" + aid,
                 // data: JSON.stringify(student),  // data that I'm sending. (convert javascript object to json string)
                 // dataType: "json",  // type of data I'm sending
             });  // end ajax

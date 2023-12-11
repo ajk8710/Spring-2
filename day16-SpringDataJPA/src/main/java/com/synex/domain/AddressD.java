@@ -1,11 +1,14 @@
 package com.synex.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class AddressD {
     
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Id private int id;
     private int houseNo;
     private String city;
@@ -15,12 +18,30 @@ public class AddressD {
     
     public AddressD() {};
     
+    public AddressD(int id, int houseNo, String city, String province, String country, long phone) {
+        super();
+        this.id = id;
+        this.houseNo = houseNo;
+        this.city = city;
+        this.province = province;
+        this.country = country;
+        this.phone = phone;
+    }
+
     public AddressD(int houseNo, String city, String province, String country, long phone) {
         this.houseNo = houseNo;
         this.city = city;
         this.province = province;
         this.country = country;
         this.phone = phone;
+    }
+    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getHouseNo() {
