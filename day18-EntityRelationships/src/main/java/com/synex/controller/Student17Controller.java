@@ -46,7 +46,7 @@ public class Student17Controller {
     
     @RequestMapping(value="/getStudentsWhoTaughtByTrainer/{trainerName}", method=RequestMethod.GET)
     public List<Student17> getTrainerWhoTeachesStudentNoUnderscore(@PathVariable String trainerName) {
-        return student17Service.findByTrainerListName(trainerName);
+        return student17Service.findByTrainerListTrainerName(trainerName);
     }
     
 }

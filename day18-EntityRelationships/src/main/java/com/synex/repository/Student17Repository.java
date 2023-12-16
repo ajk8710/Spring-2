@@ -12,6 +12,6 @@ public interface Student17Repository extends JpaRepository<Student17, Integer> {
     
     // Using nomenclature
     // findBy (from Trainers) NameOfAttribute NameOfAttribute
-    public List<Student17> findByTrainerListName(String trainerName);
+    public List<Student17> findByTrainerListTrainerName(String trainerName);
     
 }

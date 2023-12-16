@@ -25,8 +25,8 @@ public class Student17Service {
         student17Repository.deleteById(studentId);
     }
     
-    public List<Student17> findByTrainerListName(String trainerName) {
-        return student17Repository.findByTrainerListName(trainerName);
+    public List<Student17> findByTrainerListTrainerName(String trainerName) {
+        return student17Repository.findByTrainerListTrainerName (trainerName);
     }
     
 }

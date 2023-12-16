@@ -13,7 +13,7 @@ public class Student17 {
     private String name;
     private int age;
     
-    @ManyToMany
+    @ManyToMany(mappedBy="studentList")
     private List<Trainer17> trainerList;
     
     public Student17() {};

@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 
 @Entity
@@ -12,6 +14,11 @@ public class Trainer17 {
     @Id private int id;
     private String trainerName;
     
+    // Set relationship table name and its column names.
+    @JoinTable(name="trainer_student",
+        joinColumns = {@JoinColumn(name="trainer_id")},
+        inverseJoinColumns = {@JoinColumn(name="student_id")}
+    )
     @ManyToMany
     private List<Student17> studentList;
     
