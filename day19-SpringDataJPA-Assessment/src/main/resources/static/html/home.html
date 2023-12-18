@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        
+        // Get studentList from controller and append students to table.
+        $.get("/getAllStudents", function(res) {
+            $.each(res, function(idx, student) {
+                $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>" + student.age + "</td>" + "<td>" + student.classes + "</td>" + "</tr>");
+            });
+        });
+        
+        // Upon click of button, do post request
+        $("#postStudentBtn").click(function() {
+            // get the values from text fields, create json student.
+            var id = $("#sid").val();
+            var name = $("#sname").val();
+            var age = $("#sage").val();
+            var classes = $("#sclass").val();
+            var student = {"id": id, "name": name, "age": age, "classes": classes};
+            
+            // Post request to url saveStudent
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",  // type of response I expect
+                url: "http://localhost:8082/saveStudent",
+                data: JSON.stringify(student),  // parse javascript object to json string
+                dataType: "json",  // type of data I'm sending
+                success: function(res) {  // upon success of post request, run this function which takes response. Response is list of students.
+                    $("#tbl tr:not(:first)").remove();  // remove all but first row which is table header
+                    $.each(res, function(idx, student) {
+                        $("#tbl").append("<tr>" + "<td>" + student.id + "</td>" + "<td>" + student.name + "</td>" + "<td>"+ student.age + "</td>" + "<td>" + student.classes + "</td>" + "</tr>");
+                    });
+                },
+                error: function(e) {}
+            });  // end ajax post
+            
+            $("#tblEdit tr:not(:first)").remove();  // remove all but first row which is table header (to remove old student data at search table)
+        });  // end post button click
+        
+        // Upon click of Search, find student
+        $("#findStudentByNameBtn").click(function() {
+            // get the values from text field
+            var searchName = $("#searchName").val();
+            
+            $.ajax({
+                type: "GET",
+                contentType: "application/json",  // type of response I expect
+                url: "http://localhost:8082/findByName/" + searchName,
+                success: function(std) {  // upon success, fill the textbox
+                    $("#tblEdit tr:not(:first)").remove();  // remove all but first row which is table header
+                    
+                    if (std) {  // !std for null check. std==null std==undefined do not work for some reason. Can do !$.trim(std) also.
+                        $("#sid").val(std.id);
+                        $("#sname").val(std.name);
+                        $("#sage").val(std.age);
+                        $("#sclass").val(std.classes);
+                        $("#tblEdit").append("<tr>" + "<td>" + std.id + "</td>" + "<td>" + std.name + "</td>" + "<td>" + std.age + "</td>" + "<td>" + std.classes + "</td>"
+                        + "<td>" + "<a href='#' class='update' upId=" + std.id + " upName=" + std.name + " upAge=" + std.age + " upClass=" + std.classes + ">Update</a>" + "</td>" + "</tr>");
+                    }
+                    else {
+                        $("#tblEdit").append("<tr>" + "<td colspan='100%'>Not Found</td>" + "</tr>");
+                    }
+
+                },
+                error: function(e) {}
+            });  // end ajax
+        });  // end on click Search
+        
+        // Method if I want to have a button to fill boxes, instead of filling boxes at search.
+        // Upon click of Update, fill boxes
+        $("#tblEdit").on("click", ".update", function() {
+            $("#sid").val($(this).attr("upId"));
+            $("#sname").val($(this).attr("upName"));
+            $("#sage").val($(this).attr("upAge"));
+            $("#sclass").val($(this).attr("upClass"));
+            return false;  // prevent default behavior of anchor tag (redirecting) (does not go to /#)
+        });
+        
+    });  // end dom.ready
+</script>
+</head>
+
+<body>
+    <div class="container">
+    <div class="row">
+    <div class="col-12">
+    
+    <h1>Student Page</h1>
+    ID (if updating): <input type="text" id="sid"/> <br>
+    Enter Name: <input type="text" id="sname"/><br>
+    Enter Age: <input type="text" id="sage"/><br>
+    Enter Class: <input type="text" id="sclass"/><br>
+    
+    <input type="button" id="postStudentBtn" value="Save"/><br><br>
+    
+    <h1>Search Student</h1>
+    Enter Name: <input type="text" id="searchName"/><br><br>
+    
+    <input type="button" id="findStudentByNameBtn" value="Search"/><br><br>
+    
+    <h1>All Student Table</h1>
+    <table id="tbl" class="table table-striped">
+    <tr> <th>ID</th><th>Name</th><th>Age</th><th>Class</th> </tr>
+    </table>
+    <br><br>
+    
+    <h1>Serached Student Table</h1>
+    <table id="tblEdit" class="table table-striped">
+    <tr> <th>ID</th><th>Name</th><th>Age</th><th>Class</th><th>Update</th> </tr>
+    </table>
+    
+    </div></div></div>
+</body>
+</html>
