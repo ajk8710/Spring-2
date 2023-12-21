@@ -7,12 +7,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Trainer17 {
     
     @Id private int id;
     private String trainerName;
+    @Transient private String address;  // transient field does not get created/saved into column of table in DB
     
     // Set relationship table name and its column names.
     @JoinTable(name="trainer_student",
@@ -28,10 +30,25 @@ public class Trainer17 {
         this.id = id;
         this.trainerName = trainerName;
     }
+    
+    public Trainer17(int id, String trainerName, String address) {
+        super();
+        this.id = id;
+        this.trainerName = trainerName;
+        this.address = address;
+    }
 
     public Trainer17(int id, String trainerName, List<Student17> studentList) {
         this.id = id;
         this.trainerName = trainerName;
+        this.studentList = studentList;
+    }
+
+    public Trainer17(int id, String trainerName, String address, List<Student17> studentList) {
+        super();
+        this.id = id;
+        this.trainerName = trainerName;
+        this.address = address;
         this.studentList = studentList;
     }
 
@@ -51,12 +68,25 @@ public class Trainer17 {
         this.trainerName = trainerName;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public List<Student17> getStudentList() {
         return studentList;
     }
 
     public void setStudentList(List<Student17> studentList) {
         this.studentList = studentList;
+    }
+
+    @Override
+    public String toString() {
+        return "Trainer [id=" + id + ", trainerName=" + trainerName + ", address=" + address + ", studentList=" + studentList + "]";
     }
     
 }

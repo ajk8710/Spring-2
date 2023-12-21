@@ -13,6 +13,10 @@ public class Student17Service {
     
     @Autowired Student17Repository student17Repository;
     
+    public Student17 findById(int studentId) {
+        return student17Repository.findById(studentId).orElse(null);
+    }
+    
     public List<Student17> findAll() {
         return student17Repository.findAll();
     }

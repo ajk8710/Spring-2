@@ -13,6 +13,10 @@ public class Trainer17Service {
     
     @Autowired Trainer17Repository trainer17Repository;
     
+    public Trainer17 findById(int trainerId) {
+        return trainer17Repository.findById(trainerId).orElse(null);
+    }
+    
     public List<Trainer17> findAll() {
         return trainer17Repository.findAll();
     }

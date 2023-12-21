@@ -26,6 +26,11 @@ public class Student17Controller {
         return student17Service.findAll();
     }
     
+    @RequestMapping(value="getStudentById/{studentId}", method=RequestMethod.GET)
+    public Student17 getStudentById(@PathVariable int studentId) {
+        return student17Service.findById(studentId);
+    }
+    
     // Test following post and delete APIs with PostMan & Spring H2 DB.
     @RequestMapping(value="saveStudent", method=RequestMethod.POST)
     public Student17 saveStudent(@RequestBody Student17 student) {  // Without @RequestBody, postman doesn't accept request body & sends student=null data
