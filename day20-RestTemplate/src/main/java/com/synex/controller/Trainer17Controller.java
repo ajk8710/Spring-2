@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.synex.client.TrainerClient;
 import com.synex.domain.Trainer17;
 import com.synex.service.Trainer17Service;
@@ -53,6 +56,21 @@ insert into trainer_student values (1, 4);
     @RequestMapping(value="/getTrainerFromOtherProj/{studentName}", method=RequestMethod.GET)
     public JsonNode getTrainerFromOtherProj(@PathVariable String studentName) {
         return trainerClient.findTrainerOfStudent(studentName);
+    }
+    
+    // Posting data to another project's H2 on port 8282. (I'm on port 8283)
+    // sending jsonNode, not trainer, because trainer technically is entity of another project. (i.e. cannot import trainer class)
+    @RequestMapping(value="saveTrainerToOtherProject", method=RequestMethod.POST)
+    public JsonNode saveTrainerToOtherProject(@RequestBody JsonNode jsonNode) {
+        return trainerClient.saveTrainerToOtherProject(jsonNode);
+    }
+    
+    @RequestMapping(value="saveTrainerToOtherProjectAlsoSendAddress", method=RequestMethod.POST)
+    public JsonNode saveTrainerToOtherProjectAlsoSendAddress(@RequestBody JsonNode jsonNode) {
+        // ObjectMapper mapper = new ObjectMapper();  // could convert to json if request body was not json.
+        // JsonNode json = mapper.createObjectNode();
+        ((ObjectNode) jsonNode).put("address", "New York");  // ObjectNode.put method can add extra contents to body of json.
+        return trainerClient.saveTrainerToOtherProject(jsonNode);
     }
     
 }
