@@ -22,7 +22,9 @@ public class Trainer17Controller {
     
 /*
 For Testing on H2 DB.
-H2 creates columns of a table in alphabetical order. i.e. (age, id, name), (student_id, trainer_id).
+H2 creates columns of a table in alphabetical order. i.e. (age, id, name), (student_id, trainer_id). Or maybe double, int, string.
+Run below SQL queries on other project's H2 DB.
+
 insert into student17 values (21, 1, 's1');
 insert into student17 values (22, 2, 's2');
 insert into trainer17 values (3, 't3');
