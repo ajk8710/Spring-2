@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Auto Complete</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>  <!-- For auto complete feature -->
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>  <!-- jQuery & jQuery UI should be compatible versions to show correctly -->
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>  <!-- For auto complete feature -->
+<script>
+    // autoComplete2 is an example using a filtered list that is fetched from Spring API /getCountry2 as user types.
+    // autocompete-source is received by calling /getCountry2 with parameters.
+    
+    $(document).ready(function () {
+        $("#tags").keydown(function() {  // When key is pushed down,
+            var country = $('#tags').val();  // get the value of input tag, and assign to country variable.
+            
+            $("#tags").autocomplete({  // Shows list of available auto completes, setting source to response from api.
+                source: function(request, response) {
+                    $.get("/getCountry2/" + request.term, {  // getCountry2/pathVariable
+                        "country": request.term  // pathVariable is country
+                    }, function(responseText) {
+                        // alert(responseText);
+                        response(JSON.parse(responseText));
+                    });
+                },
+                minLength : 2,  // respond on at least 2 character typing
+                messages : {
+                    noResults : '',
+                    results: function() {
+                    }
+                }
+            });
+        });
+    });
+</script>
+</head>
+
+<body>
+    <div class="ui-widget">
+    <label for="tags">Tags: </label>
+    <input id="tags"/>
+    </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Auto Complete</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>  <!-- For auto complete feature -->
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>  <!-- jQuery & jQuery UI should be compatible versions to show correctly -->
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>  <!-- For auto complete feature -->
+<script>
+    // autoComplete0 is an example using a list that is written in html file.
+    
+    $(function() {  // $ for jQuery code, not plain javascript.
+        var availableCountry = ["USA", "United States", "Korea", "Japan", "Canada", "Mexico", "England", "Costa Rica", "Congo"];
+        
+        $("#tags").autocomplete({  // Shows list of available auto completes upon typing
+            source: availableCountry
+        });
+    });
+</script>
+</head>
+
+<body>
+    <div class="ui-widget">
+    <label for="tags">Tags: </label>
+    <input id="tags"/>
+    </div>
+</body>
+</html>
