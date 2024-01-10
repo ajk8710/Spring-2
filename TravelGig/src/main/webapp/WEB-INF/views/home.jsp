@@ -4,12 +4,30 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Home Page of Travel Gig</title>
-<script src="jquery-2.1.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="home.css">
+
+<script>
+$(document).ready(function() {
+	$("#searchBtn").click(function() {  // upon click of searchBtn
+		var searchString = $("#searchLocation").val();
+		$.get("searchHotel/" + searchString, function(res) {  // call searchHotel of TravelGig (myself), get response.
+			$("#tblHotel tr:not(:first)").remove();  // remove all but first row which is table header
+            $.each(res, function(idx, val) {
+                $("#tblHotel").append("<tr>" + "<td>" + val.hotelName + "</td>" + "<td>" + val.address + "</td>"
+                	+ "<td>" + val.city + "</td>" + "<td>" + val.state + "</td>"
+                	+ "<td>" + val.averagePrice + "</td>" + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "'></img>" + "</td>"
+                	+ "<td>" + val.starRating + "</td>" + "</tr>");
+            });
+		});
+	});
+});
+</script>
 </head>
+
 <body>
 <div class="container" style="margin-left:100px">
 <h1>Welcome to Travel Gig</h1>
@@ -110,7 +128,9 @@
     <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>List of Hotels:</div>   
     
     <div id="listHotel">
-    
+        <table id="tblHotel" border="1">
+            <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> </tr>
+        </table>
     </div>
     
 </div>
