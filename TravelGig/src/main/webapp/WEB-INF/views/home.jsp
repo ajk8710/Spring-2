@@ -12,18 +12,61 @@
 
 <script>
 $(document).ready(function() {
-	$("#searchBtn").click(function() {  // upon click of searchBtn
-		var searchString = $("#searchLocation").val();
-		$.get("searchHotel/" + searchString, function(res) {  // call searchHotel of TravelGig (myself), get response.
-			$("#tblHotel tr:not(:first)").remove();  // remove all but first row which is table header
+    $("#searchBtn").click(function() {  // upon click of searchBtn
+        var searchString = $("#searchLocation").val();
+        $.get("searchHotel/" + searchString, function(res) {  // call searchHotel of TravelGig (this project), get response.
+            $("#tblHotel tr:not(:first)").remove();  // remove all but first row which is table header
             $.each(res, function(idx, val) {
                 $("#tblHotel").append("<tr>" + "<td>" + val.hotelName + "</td>" + "<td>" + val.address + "</td>"
-                	+ "<td>" + val.city + "</td>" + "<td>" + val.state + "</td>"
-                	+ "<td>" + val.averagePrice + "</td>" + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "'></img>" + "</td>"
-                	+ "<td>" + val.starRating + "</td>" + "</tr>");
+                    + "<td>" + val.city + "</td>" + "<td>" + val.state + "</td>"
+                    + "<td>" + val.averagePrice + "</td>" + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "'></img>" + "</td>"
+                    + "<td>" + val.starRating + "</td>" + "</tr>");
             });
-		});
-	});
+        });
+    });
+    
+    $("#filterBtn").click(function() {
+        //$("#tblHotel tr").not(":first").show();  // Show everything again except first row (header) (Resets filtered table back to unfiltered.)
+        $("#tblHotel tr").not(":first").hide();  // Logic the other way compared to above. Hide everything, then show per filter.
+        
+        var selectedPrice = parseInt($("#priceValue").text());  // max price to filter
+        var filterStar1 = $("#1_star_rating").is(":checked");  // see if checkbox is checked
+        var filterStar2 = $("#2_star_rating").is(":checked");
+        var filterStar3 = $("#3_star_rating").is(":checked");
+        var filterStar4 = $("#4_star_rating").is(":checked");
+        var filterStar5 = $("#5_star_rating").is(":checked");
+        
+        $("#tblHotel tr").not(":first").each(function(idx, val) {  // for each row except first row (header), iterate.
+            var price = $(this).children("td").eq("4").text();  // this rows's children, 4th colum is price, get its text.
+            var star = $(this).children("td").eq("6").text();  // get its star rating
+            
+            // if (price > selectedPrice) {
+            // 	$(this).hide()  // hide() not remove() because it needs to show back when re-filtering
+            // }
+            if (price <= selectedPrice) {  // if within price
+                if (star == 1 && filterStar1) {  // and if this star filter is checked
+                    $(this).show()  // then show
+                }
+                else if (star == 2 && filterStar2) {
+                    $(this).show()
+                }
+                else if (star == 3 && filterStar3) {
+                    $(this).show()
+                }
+                else if (star == 4 && filterStar4) {
+                    $(this).show()
+                }
+                else if (star == 5 && filterStar5) {
+                    $(this).show()
+                }
+                
+                if (!(filterStar1 || filterStar2 || filterStar3 || filterStar4 || filterStar5)) {  // if no star is filtered
+                    $(this).show()  // show if within price
+                }
+            }
+        });  // end iteration of rows
+    });  // filterBtn
+    
 });
 </script>
 </head>
@@ -53,13 +96,13 @@ $(document).ready(function() {
     Check-Out Date: <input type="date" id="checkOutDate" name="checkOutDate"/>
     </div>
     <input class="btn-sm btn-primary" type="button" id="searchBtn" value="SEARCH"/>
-    </div>
-</div>
+    </div>  <!-- end form-row -->
+</div>  <!-- end container border rounded -->
 
 <div class="row">
 <div class="col-2 border rounded" style="margin-left:50px;padding:25px">
     
-    <br>    
+    <br>
     <!--  Star Rating: 
     <select class="form-control" id="filter_starRating">
         <option value=0>Select</option>
@@ -78,7 +121,7 @@ $(document).ready(function() {
     </div>
     <div class="form-check-inline">
         <label class="form-check-label">
-            <input type="checkbox" class="star_rating form-check-input" id="2_star_rating" value=2>2        
+            <input type="checkbox" class="star_rating form-check-input" id="2_star_rating" value=2>2
         </label>
     </div>
     <div class="form-check-inline">
@@ -121,7 +164,7 @@ $(document).ready(function() {
     </div>
     
     <input style="margin-top:25px" class="btn btn-primary" type="button" id="filterBtn" value="FILTER"/>    
-</div>
+</div>  <!-- end col-2 border rounded -->
 
 
 <div class="col-7 border rounded" style="margin-left:50px;">
@@ -132,7 +175,7 @@ $(document).ready(function() {
             <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> </tr>
         </table>
     </div>
-    
+
 </div>
 </div>
 
