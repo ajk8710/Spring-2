@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="home.css">
 
 <script>
 $(document).ready(function() {
@@ -19,8 +18,11 @@ $(document).ready(function() {
             $.each(res, function(idx, val) {
                 $("#tblHotel").append("<tr>" + "<td>" + val.hotelName + "</td>" + "<td>" + val.address + "</td>"
                     + "<td>" + val.city + "</td>" + "<td>" + val.state + "</td>"
-                    + "<td>" + val.averagePrice + "</td>" + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "'></img>" + "</td>"
-                    + "<td>" + val.starRating + "</td>" + "</tr>");
+                    + "<td>" + val.averagePrice + "</td>"
+                    // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
+                    + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
+                    + "<td>" + val.starRating + "</td>"
+                    + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#myModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>" + "</tr>");
             });
         });
     });
@@ -41,10 +43,13 @@ $(document).ready(function() {
             var star = $(this).children("td").eq("6").text();  // get its star rating
             
             // if (price > selectedPrice) {
-            // 	$(this).hide()  // hide() not remove() because it needs to show back when re-filtering
+            // 	   $(this).hide()  // hide() not remove() because it needs to show back when re-filtering
             // }
             if (price <= selectedPrice) {  // if within price
-                if (star == 1 && filterStar1) {  // and if this star filter is checked
+                if (!(filterStar1 || filterStar2 || filterStar3 || filterStar4 || filterStar5)) {  // if no star is filtered
+                    $(this).show()  // then show
+                }
+                else if (star == 1 && filterStar1) {  // else see if this star filter is checked
                     $(this).show()  // then show
                 }
                 else if (star == 2 && filterStar2) {
@@ -59,15 +64,62 @@ $(document).ready(function() {
                 else if (star == 5 && filterStar5) {
                     $(this).show()
                 }
-                
-                if (!(filterStar1 || filterStar2 || filterStar3 || filterStar4 || filterStar5)) {  // if no star is filtered
-                    $(this).show()  // show if within price
-                }
             }
         });  // end iteration of rows
-    });  // filterBtn
+    });  // end filterBtn
     
-});
+    // Opens modal upon clicking image.
+    $("#tblHotel").on("click", ".hotelDetailOnImage", function() {
+        $("#myModal").toggle();
+        
+        var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
+        $("#modal_hotelName").val(hotelName);  // Sets textfields in modal
+        $("#modal_noRooms").val($("#noRooms").val());
+        $("#modal_noGuests").val($("#noGuests").val());
+        $("#modal_checkInDate").val($("#checkInDate").val());
+        $("#modal_checkOutDate").val($("#checkOutDate").val());
+        
+        $('#select_roomTypes').empty()  // empty selection options, otherwise options keeps appended as button clicking.
+        var hotelId = $(this).attr("attrHotelId");  // grab hotelId to call getRoomTypesOfHotel/hotelId
+        $.get("getRoomTypesOfHotel/" + hotelId, function(res) {  // call getRoomTypesOfHotel of TravelGig (this project), get response.
+            $.each(res, function(idx, item) {  // for each roomtype
+                $('#select_roomTypes').append($("<option>", {  // append as selection option
+                    value: item.typeId,
+                    text: item.name
+                }));
+            });
+        });
+        
+        return false;
+    });
+    
+    // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
+    $('#myModalClose').click(function() {
+        $('#myModal').hide();
+    });
+    
+    // Opens modal upon clicking button.
+    $("#tblHotel").on("click", ".open-my-Modal", function() {
+        var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
+        $("#modal_hotelName").val(hotelName);  // Sets textfields in modal
+        $("#modal_noRooms").val($("#noRooms").val());
+        $("#modal_noGuests").val($("#noGuests").val());
+        $("#modal_checkInDate").val($("#checkInDate").val());
+        $("#modal_checkOutDate").val($("#checkOutDate").val());
+        
+        $('#select_roomTypes').empty()  // empty selection options, otherwise options keeps appended as button clicking.
+        var hotelId = $(this).attr("attrHotelId");  // grab hotelId to call getRoomTypesOfHotel/hotelId
+        $.get("getRoomTypesOfHotel/" + hotelId, function(res) {  // call getRoomTypesOfHotel of TravelGig (this project), get response.
+            $.each(res, function(idx, item) {  // for each roomtype
+                $('#select_roomTypes').append($("<option>", {  // append as selection option
+                    value: item.typeId,
+                    text: item.name
+                }));
+            });
+        });
+    });
+    
+});  // end dom ready
 </script>
 </head>
 
@@ -172,7 +224,7 @@ $(document).ready(function() {
     
     <div id="listHotel">
         <table id="tblHotel" border="1">
-            <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> </tr>
+            <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> <th>Detail</th> </tr>
         </table>
     </div>
 
@@ -208,7 +260,7 @@ $(document).ready(function() {
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="myModalClose">Close</button>
       </div>
 
     </div>
@@ -250,7 +302,7 @@ $(document).ready(function() {
       </div>
 
       <!-- Modal body -->
-      <div class="modal-body" id="bookingRoom_modalBody">        
+      <div class="modal-body" id="bookingRoom_modalBody">
             <div class="col">
                 <div><input class="form-control" type="hidden" id="booking_hotelId"/></div>
                 <div><input class="form-control" type="hidden" id="booking_hotelRoomId"/></div>
@@ -272,7 +324,7 @@ $(document).ready(function() {
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="bookingHotelRoomModalClose">Close</button>
       </div>
 
     </div>

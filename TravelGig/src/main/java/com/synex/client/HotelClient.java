@@ -22,4 +22,16 @@ public class HotelClient {
         return returnObj;
     }
     
+    public JsonNode getRoomTypesOfHotel(int hotelId) {
+        // RestTemplate can make requests to another project on another port.
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Object> responseEntity =  // get reseponseEntity from API of another project (microservice)
+                restTemplate.getForEntity("http://localhost:8084/getRoomTypesOfHotel/" + hotelId, Object.class);  // Response is List<Hotel>
+        Object obj = responseEntity.getBody();  // get body of responseEntity
+        
+        ObjectMapper mapper = new ObjectMapper();  // let mapper to convert it to json
+        JsonNode returnObj = mapper.convertValue(obj, JsonNode.class);  // JsonNode can represent any json.
+        return returnObj;
+    }
+    
 }

@@ -17,4 +17,10 @@ public class HotelController {
     public JsonNode searchHotel(@PathVariable String searchString) {
         return hotelClient.searchHotel(searchString);
     }
+    
+    @GetMapping("getRoomTypesOfHotel/{hotelId}")
+    public JsonNode getRoomTypesOfHotel(@PathVariable int hotelId) {
+        return hotelClient.getRoomTypesOfHotel(hotelId);
+    }
+    
 }
