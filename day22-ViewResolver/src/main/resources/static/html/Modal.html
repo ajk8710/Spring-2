@@ -10,6 +10,9 @@ $(document).ready(function(){
     $("#addEmp").click(function(){
         $("table").append("<tr>" + "<td>"+$("#empName").val()+"</td>" + "<td>"+$("#empAge").val()+"</td>" + "<td>"+$("#empSalary").val()+"</td>"
             + "<td><a class='remove' href='#'>Remove</a></td> <td><a class='add' href='#'>Add</a></td> <td><a class='view' href='#'>View</a></td> </tr>")
+        $("#empName").val("");
+        $("#empAge").val("");
+        $("#empSalary").val("");
     });
     
     $("table").on('click', '.remove', function() {
@@ -41,6 +44,16 @@ $(document).ready(function(){
         $("#modalSalary").val(empSalary);
         $("#myModal2").toggle();  // opens modal
         return false;
+    });
+    
+    $('#clsModal').click(function() {  // Modal opened by anchor tag (unlike button) does not close without this.
+         $('#myModal2').hide();
+    });
+    
+    $('#dispData').click(function() {  // This sends info from modal to out of modal.
+        $("#empName").val($("#modalName").val());
+        $("#empAge").val($("#modalAge").val());
+        $("#empSalary").val($("#modalSalary").val());
     });
     
 });
@@ -135,7 +148,8 @@ $(document).ready(function(){
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss1="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss1="modal" id="clsModal">Close</button>
+        <button type="button" class="btn btn-danger" id="dispData">Display</button>
       </div>
 
     </div>
