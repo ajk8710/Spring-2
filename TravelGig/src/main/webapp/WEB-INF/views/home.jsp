@@ -22,7 +22,8 @@ $(document).ready(function() {
                     // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
                     + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
                     + "<td>" + val.starRating + "</td>"
-                    + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#myModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>" + "</tr>");
+                    // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#myModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
+                    + "</tr>");
             });
         });
     });
@@ -68,6 +69,27 @@ $(document).ready(function() {
         });  // end iteration of rows
     });  // end filterBtn
     
+    // Opens modal upon clicking button. Not using it now. Instead click image.
+    $("#tblHotel").on("click", ".open-my-Modal", function() {
+        var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
+        $("#modal_hotelName").val(hotelName);  // Sets textfields in modal
+        $("#modal_noRooms").val($("#noRooms").val());
+        $("#modal_noGuests").val($("#noGuests").val());
+        $("#modal_checkInDate").val($("#checkInDate").val());
+        $("#modal_checkOutDate").val($("#checkOutDate").val());
+        
+        $("#select_roomTypes").empty()  // empty selection options, otherwise options keeps appended as button clicking.
+        var hotelId = $(this).attr("attrHotelId");  // grab hotelId to call getRoomTypesOfHotel/hotelId
+        $.get("getRoomTypesOfHotel/" + hotelId, function(res) {  // call getRoomTypesOfHotel of TravelGig (this project), get response.
+            $.each(res, function(idx, item) {  // for each roomtype
+                $('#select_roomTypes').append($("<option>", {  // append as selection option
+                    value: item.typeId,
+                    text: item.name
+                }));
+            });
+        });
+    });
+    
     // Opens modal upon clicking image.
     $("#tblHotel").on("click", ".hotelDetailOnImage", function() {
         $("#myModal").toggle();
@@ -90,34 +112,68 @@ $(document).ready(function() {
             });
         });
         
+        $("#modal_hotelId").val(hotelId);  // hidden textfield with id=modal_hotelId. Save hotelId as value. So outside of this modal knows which hotel was clicked.
+        
         return false;
     });
     
     // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
-    $('#myModalClose').click(function() {
-        $('#myModal').hide();
+    $("#myModalClose").click(function() {
+        $("#myModal").hide();
     });
     
-    // Opens modal upon clicking button.
-    $("#tblHotel").on("click", ".open-my-Modal", function() {
-        var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
-        $("#modal_hotelName").val(hotelName);  // Sets textfields in modal
-        $("#modal_noRooms").val($("#noRooms").val());
-        $("#modal_noGuests").val($("#noGuests").val());
-        $("#modal_checkInDate").val($("#checkInDate").val());
-        $("#modal_checkOutDate").val($("#checkOutDate").val());
-        
-        $('#select_roomTypes').empty()  // empty selection options, otherwise options keeps appended as button clicking.
-        var hotelId = $(this).attr("attrHotelId");  // grab hotelId to call getRoomTypesOfHotel/hotelId
-        $.get("getRoomTypesOfHotel/" + hotelId, function(res) {  // call getRoomTypesOfHotel of TravelGig (this project), get response.
-            $.each(res, function(idx, item) {  // for each roomtype
-                $('#select_roomTypes').append($("<option>", {  // append as selection option
-                    value: item.typeId,
-                    text: item.name
-                }));
-            });
-        });
+    // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
+    $("#myModalCloseOnX").click(function() {
+        $("#myModal").hide();
     });
+    
+    
+    // Upon click of searchHotelRooms hide myModal (preview for booking) and open bookingHotelRoomModal
+    $("#searchHotelRooms").click(function() {
+        $("#myModal").hide();
+        $("#bookingHotelRoomModal").toggle();
+        
+        $("#booking_hotelName").val($("#modal_hotelName").val());  // copy details from myModal
+        $("#booking_noRooms").val($("#modal_noRooms").val());
+        $("#booking_noGuests").val($("#modal_noGuests").val());
+        $("#booking_checkInDate").val($("#modal_checkInDate").val());
+        $("#booking_checkOutDate").val($("#modal_checkOutDate").val());
+        var selectedRoomType_Text = $('#select_roomTypes').find(":selected").text();  // get selected room type
+        var roomTypeId = $('#select_roomTypes').find(":selected").val();
+        $("#booking_roomType").val(selectedRoomType_Text);
+        // booking_customerMobile - to be feteched from user info
+        
+        var hotelId = $("#modal_hotelId").val();
+        $.get("getRoomPriceAndDiscount/" + hotelId + "/" + roomTypeId, function(resRoomPriceAndDiscount) {  // call getRoomPriceAndDiscount of TravelGig (this project), get response.
+            $.each(resRoomPriceAndDiscount, function(idx, item) {  // for each item. idx 0 is price. idx 1 is discount.
+                var noRooms = 1;
+            	if (idx == 0) {
+            		if ($("#booking_noRooms").val()) {  // if noRooms has value, set to it. Else leave as 1 room.
+            			noRooms = $("#booking_noRooms").val();
+            		}
+            		$("#booking_price").text(item * noRooms);  // setting text value of span tag
+            		// console.log("Price per room: " + item);
+            	}
+            	else {  // if idx is not 0. i.e. idx is 1.
+            		$("#booking_discount").text($("#booking_price").text() * item * 0.01);
+            		// console.log("Discount %: " + item);
+            	}
+            });
+            // console.log($("#booking_price").text());
+            $("#booking_price").text($("#booking_price").text() - $("#booking_discount").text());  // apply discount on total price.
+        });  // end ajax get getRoomPriceAndDiscount
+    });  // end click of searchHotelRooms
+    
+    $("#bookingHotelRoomModalClose").click(function() {
+        $("#bookingHotelRoomModal").hide();
+    });
+    
+    $("#bookingHotelRoomModalCloseOnX").click(function() {
+        $("#bookingHotelRoomModal").hide();
+    });
+    
+    
+    
     
 });  // end dom ready
 </script>
@@ -224,13 +280,15 @@ $(document).ready(function() {
     
     <div id="listHotel">
         <table id="tblHotel" border="1">
-            <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> <th>Detail</th> </tr>
+            <!-- <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> <th>Detail</th> </tr> -->
+            <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> </tr>
         </table>
     </div>
 
 </div>
 </div>
 
+<!-- myModal is to preview before booking hotel room -->
 <div class="modal" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -238,7 +296,7 @@ $(document).ready(function() {
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title">Search Hotel Rooms</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" id="myModalCloseOnX">&times;</button>
       </div>
 
       <!-- Modal body -->
@@ -253,7 +311,7 @@ $(document).ready(function() {
             <select class="form-control" id="select_roomTypes">
             </select>
             No. Rooms: <input class="form-control" type="number" id="modal_noRooms"/>
-            <input style="margin-top:25px" class="btn btn-searchHotelRooms form-control btn-primary" type="button" id="" value="SEARCH"/>           
+            <input style="margin-top:25px" class="btn btn-searchHotelRooms form-control btn-primary" type="button" id="searchHotelRooms" value="SEARCH"/>           
         </div>
         
       </div>
@@ -267,6 +325,7 @@ $(document).ready(function() {
   </div>
 </div>
 
+<!-- hotelRoomsModal is temporary setup. Not using for now. -->
 <div class="modal" id="hotelRoomsModal">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -291,6 +350,7 @@ $(document).ready(function() {
   </div>
 </div>
 
+<!-- bookingHotelRoomModal is to book hotel room -->
 <div class="modal" id="bookingHotelRoomModal">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -298,7 +358,7 @@ $(document).ready(function() {
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title"></h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" id="bookingHotelRoomModalCloseOnX">&times;</button>
       </div>
 
       <!-- Modal body -->
@@ -314,7 +374,7 @@ $(document).ready(function() {
                 <div>Check-Out Date: <input readonly="true" class="form-control" type="text" id="booking_checkOutDate"/></div>
                 <div>Room Type: <input readonly="true" class="form-control" type="text" id="booking_roomType"/></div>
                 <div>Discount: $<span id="booking_discount"></span></div>
-                <div>Total Price: $<span id="booking_price"></span></div>                   
+                <div>Total Price: $<span id="booking_price"></span></div>
                 <div style='margin-top:20px'>
                     <button class='btn-confirm-booking btn btn-primary'>Confirm Booking</button>
                     <button class='btn btn-primary'>Edit</button>

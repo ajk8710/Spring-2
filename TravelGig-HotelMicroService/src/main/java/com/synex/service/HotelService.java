@@ -1,5 +1,6 @@
 package com.synex.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,20 @@ public class HotelService {
             roomTypesOfHotel.add(room.getType());
         }
         return roomTypesOfHotel;
+    }
+    
+    public List<Float> getRoomPriceAndDiscount(int hotelId, int roomTypeId) {
+        List<Float> hotelIdAndRoomTypeId = new ArrayList<>();
+        
+        Set<HotelRoom> hotelRooms = hotelRepository.findById(hotelId).orElse(null).getHotelRooms();  // may need to handle null pointer exception
+        for (HotelRoom room : hotelRooms) {
+            if (room.getType().getTypeId() == roomTypeId) {
+                hotelIdAndRoomTypeId.add(room.getPrice());
+                hotelIdAndRoomTypeId.add(room.getDiscount());
+                break;
+            }
+        }
+        return hotelIdAndRoomTypeId;
     }
     
 }

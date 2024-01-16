@@ -23,4 +23,9 @@ public class HotelController {
         return hotelClient.getRoomTypesOfHotel(hotelId);
     }
     
+    @GetMapping("getRoomPriceAndDiscount/{hotelId}/{roomTypeId}")
+    public JsonNode getRoomPriceAndDiscount(@PathVariable int hotelId, @PathVariable int roomTypeId) {
+        return hotelClient.getRoomPriceAndDiscount(hotelId, roomTypeId);
+    }
+    
 }

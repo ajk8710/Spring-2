@@ -27,4 +27,9 @@ public class HotelController {
         return hotelService.getRoomTypesOfHotel(hotelId);
     }
     
+    @GetMapping("getRoomPriceAndDiscount/{hotelId}/{roomTypeId}")
+    public List<Float> getRoomPriceAndDiscount(@PathVariable int hotelId, @PathVariable int roomTypeId) {
+        return hotelService.getRoomPriceAndDiscount(hotelId, roomTypeId);
+    }
+    
 }
