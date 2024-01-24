@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.synex.client.HotelClient;
 
-@RestController
+@RestController  // RestController returns json data. Controller returns view resolver (returns file name).
 public class HotelController {
     
     @Autowired HotelClient hotelClient;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.synex.domain.Hotel;
 
-@Repository
+// @Repository comes from JpaRepository
 public interface HotelRepository extends JpaRepository<Hotel, Integer> {
     
     // find exact match

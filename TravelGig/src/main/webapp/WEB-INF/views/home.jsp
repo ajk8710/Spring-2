@@ -173,6 +173,60 @@ $(document).ready(function() {
     });
     
     
+    // Upon click of confirmBookingBtn, hide bookingHotelRoomModal (comfirm for booking) and open completeBookingGuestInfoModal
+    $("#confirmBookingBtn").click(function() {
+        $("#bookingHotelRoomModal").hide();
+        $("#completeBookingGuestInfoModal").toggle();
+        //alert($("#booking_noGuests").val());
+        
+        $("#id_guestFirstName").val("");  // discard previous values
+        $("#id_guestLastName").val("");
+        $("#id_guestAge").val("");
+        $("#id_guestGender").val("");
+    });  // end click of confirmBookingBtn
+    
+    
+    // Upon click of id_addGuestBtn, add a guest to guest list, also append to tblGuest.
+    var guestList = [];
+    $("#id_addGuestBtn").click(function() {
+    	var guestFirstName = $("#id_guestFirstName").val();
+    	var guestLastName = $("#id_guestLastName").val();
+    	var guestAge = parseInt($("#id_guestAge").val());
+    	var guestGender = $("#id_guestGender").val();
+    	
+    	var guestToAdd = {"firstName": guestFirstName, "lastName": guestLastName, "gender": guestGender, "age": guestAge};
+    	guestList.push(guestToAdd);
+    	
+    	$("#tblGuest").append("<tr>" + "<td>" + guestFirstName + "</td>" + "<td>" + guestLastName + "</td>"
+    			                     + "<td>" + guestAge + "</td>" + "<td>" + guestGender + "</td>" + "</tr>");
+        console.log(guestToAdd);
+    	console.log(guestList);
+    	
+        // Post request to url localhost:8082/saveGuest of this project's GuestController.
+        // It calls GuestClient, then it calls GuestController of BookingMicroservice, which calls Service layer, do DAO work with repository, then returns.
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",  // type of response I expect
+            url: "http://localhost:8082/saveGuest",
+            data: JSON.stringify(guestToAdd),  // parse javascript object to json string
+            dataType: "json",  // type of data I'm sending
+            success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
+                console.log("Saved: " + res)
+            },
+            error: function(e) {}
+        });  // end ajax post
+        
+        
+    });
+    
+    $("#completeBookingGuestInfoModalClose").click(function() {
+        $("#completeBookingGuestInfoModal").hide();
+    });
+    
+    $("#completeBookingGuestInfoModalCloseOnX").click(function() {
+        $("#completeBookingGuestInfoModal").hide();
+    });
+    
     
     
 });  // end dom ready
@@ -183,6 +237,15 @@ $(document).ready(function() {
 <div class="container" style="margin-left:100px">
 <h1>Welcome to Travel Gig</h1>
 <h2>Search your desired hotel</h2>
+<%
+Object user = request.getAttribute("user");
+if(user != null){
+%>
+<span>Welcome: <%=user%></span><a href='logout'>Logout</a>
+<%}else{%>
+<a href='login'>Login</a>
+<span>Welcome: <%=user%></span><a href='login?logout'>Logout</a>
+<%}%>
 </div>
 
 <div class="container border rounded" style="margin:auto;padding:50px;margin-top:50px;margin-bottom:50px">
@@ -324,6 +387,7 @@ $(document).ready(function() {
     </div>
   </div>
 </div>
+<!-- End myModal -->
 
 <!-- hotelRoomsModal is temporary setup. Not using for now. -->
 <div class="modal" id="hotelRoomsModal">
@@ -349,6 +413,7 @@ $(document).ready(function() {
     </div>
   </div>
 </div>
+<!-- End hotelRoomsModal. Not using for now. -->
 
 <!-- bookingHotelRoomModal is to book hotel room -->
 <div class="modal" id="bookingHotelRoomModal">
@@ -376,8 +441,8 @@ $(document).ready(function() {
                 <div>Discount: $<span id="booking_discount"></span></div>
                 <div>Total Price: $<span id="booking_price"></span></div>
                 <div style='margin-top:20px'>
-                    <button class='btn-confirm-booking btn btn-primary'>Confirm Booking</button>
-                    <button class='btn btn-primary'>Edit</button>
+                    <button class="btn-confirm-booking btn btn-primary" id="confirmBookingBtn">Confirm Booking / Move to Guest Info</button>
+                    <button class="btn btn-primary">Edit</button>
                 </div>
             </div>          
       </div>
@@ -390,6 +455,65 @@ $(document).ready(function() {
     </div>
   </div>
 </div>
+<!-- End bookingHotelRoomModal -->
+
+<!-- completeBookingGuestInfoModal is to complete booking with guest info -->
+<div class="modal" id="completeBookingGuestInfoModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title"></h4>
+        <button type="button" class="close" data-dismiss="modal" id="completeBookingGuestInfoModalCloseOnX">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" id="confirmRoom_modalBody">
+            <div class="col">
+                
+				<div class="container border rounded" style="margin:auto;padding:50px;margin-top:50px;margin-bottom:50px">
+				    <h3>Please add your guests info</h3>
+				    <div class="form-row">
+					    <div class="col-4">
+					        First Name <input class="form-control" type="text" id="id_guestFirstName""/>
+					    </div>
+					    <div class="col-4">
+					        Last Name <input class="form-control" type="text" id="id_guestLastName""/>
+					    </div>
+					    <div class="col-2">
+					        Age <input class="form-control" type="number" id="id_guestAge""/>
+					    </div>
+					    <div class="col-2">
+	                        Gender <input class="form-control" type="text" id="id_guestGender""/>
+	                    </div>
+				    </div>  <!-- end form-row -->
+				    <br/>
+				    <input class="btn-sm btn-primary" type="button" id="id_addGuestBtn" value="Add Guest"/>
+				</div>  <!-- end container border rounded -->
+				
+				<h5>Your Guests:</h5>
+                <div id="listGuest" class="col-12 border rounded">
+                    <table id="tblGuest" border="1" class="col-12 border rounded">
+                        <tr> <th>First Name</th> <th>Last Name</th> <th>Age</th> <th>Gender</th> </tr>
+                    </table>
+                </div>
+                
+                <div style='margin-top:20px'>
+                    <button class="btn-complete-booking-guest-info btn btn-primary" id=completeBookingGuestInfoBtn>Complete My Booking!</button>
+                </div>
+            </div>  <!-- end modal col -->
+      </div>  <!-- end modal body -->
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="completeBookingGuestInfoModalClose">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- End completeBookingGuestInfoModal -->
 
 <script>
 var slider = document.getElementById("priceRange");
