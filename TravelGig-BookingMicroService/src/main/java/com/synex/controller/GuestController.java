@@ -38,3 +38,12 @@ public class GuestController {
     }
     
 }
+
+/* For postman test
+{
+    "bookingId": "First1",
+    "hotelId": "Last1",
+    "noRooms": "M",
+    "age": 21
+}
+*/

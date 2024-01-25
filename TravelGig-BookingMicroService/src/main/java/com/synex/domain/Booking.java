@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Transient;
 
 @Entity
 public class Booking {
@@ -17,9 +18,13 @@ public class Booking {
     private int bookingId;
     
     private int hotelId; //communicates with hotel management to fetch hotel details
-    private int hotelRoomId;    
+    private int hotelRoomId;
     private int noRooms;
     
+    @JoinTable(name="booking_guest",
+        joinColumns = {@JoinColumn(name="booking_id")},
+        inverseJoinColumns = {@JoinColumn(name="guest_id")}
+    )
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Guest> guests;
     
@@ -43,18 +48,34 @@ public class Booking {
     private float  bonanzaDiscount;
     private float  totalSavings;
     
-    @Transient
-    private String hotelName;   
+    public Booking() {}
     
-    @Transient
-    private String hotelJsonString;
-
-    @Transient
-    private String hotelRoomJsonString;
-
-    @Transient
-    private String confirmationNumber;
-
+    public Booking(int bookingId, int hotelId, int hotelRoomId, int noRooms, Set<Guest> guests, String checkInDate,
+            String checkOutDate, String bookedOnDate, String status, float price, float discount, String customerMobile,
+            String roomType, String userName, String userEmail, float taxRateInPercent, float finalCharges,
+            float bonanzaDiscount, float totalSavings, String hotelName, String hotelJsonString,
+            String hotelRoomJsonString, String confirmationNumber) {
+        this.bookingId = bookingId;
+        this.hotelId = hotelId;
+        this.hotelRoomId = hotelRoomId;
+        this.noRooms = noRooms;
+        this.guests = guests;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.bookedOnDate = bookedOnDate;
+        this.status = status;
+        this.price = price;
+        this.discount = discount;
+        this.customerMobile = customerMobile;
+        this.roomType = roomType;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.taxRateInPercent = taxRateInPercent;
+        this.finalCharges = finalCharges;
+        this.bonanzaDiscount = bonanzaDiscount;
+        this.totalSavings = totalSavings;
+    }
+    
     public int getBookingId() {
         return bookingId;
     }
@@ -206,39 +227,7 @@ public class Booking {
     public void setTotalSavings(float totalSavings) {
         this.totalSavings = totalSavings;
     }
-
-    public String getHotelName() {
-        return hotelName;
-    }
-
-    public void setHotelName(String hotelName) {
-        this.hotelName = hotelName;
-    }
-
-    public String getHotelJsonString() {
-        return hotelJsonString;
-    }
-
-    public void setHotelJsonString(String hotelJsonString) {
-        this.hotelJsonString = hotelJsonString;
-    }
-
-    public String getHotelRoomJsonString() {
-        return hotelRoomJsonString;
-    }
-
-    public void setHotelRoomJsonString(String hotelRoomJsonString) {
-        this.hotelRoomJsonString = hotelRoomJsonString;
-    }
-
-    public String getConfirmationNumber() {
-        return confirmationNumber;
-    }
-
-    public void setConfirmationNumber(String confirmationNumber) {
-        this.confirmationNumber = confirmationNumber;
-    }
-
+    
     @Override
     public String toString() {
         return "Booking [bookingId=" + bookingId + ", hotelId=" + hotelId + ", hotelRoomId=" + hotelRoomId
@@ -246,43 +235,7 @@ public class Booking {
                 + checkOutDate + ", bookedOnDate=" + bookedOnDate + ", status=" + status + ", price=" + price
                 + ", discount=" + discount + ", customerMobile=" + customerMobile + ", roomType=" + roomType
                 + ", userName=" + userName + ", userEmail=" + userEmail + ", taxRateInPercent=" + taxRateInPercent
-                + ", finalCharges=" + finalCharges + ", bonanzaDiscount=" + bonanzaDiscount + ", totalSavings="
-                + totalSavings + ", hotelName=" + hotelName + ", hotelJsonString="
-                + hotelJsonString + ", hotelRoomJsonString=" + hotelRoomJsonString + ", confirmationNumber="
-                + confirmationNumber + "]";
-    }
-
-    public Booking() {}
-    
-    public Booking(int bookingId, int hotelId, int hotelRoomId, int noRooms, Set<Guest> guests, String checkInDate,
-            String checkOutDate, String bookedOnDate, String status, float price, float discount, String customerMobile,
-            String roomType, String userName, String userEmail, float taxRateInPercent, float finalCharges,
-            float bonanzaDiscount, float totalSavings, String hotelName, String hotelJsonString,
-            String hotelRoomJsonString, String confirmationNumber) {
-        super();
-        this.bookingId = bookingId;
-        this.hotelId = hotelId;
-        this.hotelRoomId = hotelRoomId;
-        this.noRooms = noRooms;
-        this.guests = guests;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-        this.bookedOnDate = bookedOnDate;
-        this.status = status;
-        this.price = price;
-        this.discount = discount;
-        this.customerMobile = customerMobile;
-        this.roomType = roomType;
-        this.userName = userName;
-        this.userEmail = userEmail;
-        this.taxRateInPercent = taxRateInPercent;
-        this.finalCharges = finalCharges;
-        this.bonanzaDiscount = bonanzaDiscount;
-        this.totalSavings = totalSavings;
-        this.hotelName = hotelName;
-        this.hotelJsonString = hotelJsonString;
-        this.hotelRoomJsonString = hotelRoomJsonString;
-        this.confirmationNumber = confirmationNumber;
+                + ", finalCharges=" + finalCharges + ", bonanzaDiscount=" + bonanzaDiscount + ", totalSavings=" + totalSavings +  "]";
     }
     
 }

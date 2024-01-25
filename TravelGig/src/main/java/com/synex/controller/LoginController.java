@@ -24,8 +24,8 @@ import com.synex.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Controller
-@SessionAttributes("user")
+@Controller  // As long as session (logged-in, cookie not expired) is there, this controller bean is in scope inside IOC container.
+@SessionAttributes("user")  // IOC container has all the beans (objects) and lets you autowire (inject) them. Default scope is singleton scope.
 public class LoginController {
     
     @Autowired UserService userService;
@@ -40,7 +40,7 @@ public class LoginController {
             messageAfterLogInOut = "Invalid Credentials";
         }
         if (logout != null) {  // logout is empty string, not null, if parameter has passed (login?logout)
-            // Following lines can also done by SecurityConfig .logout() - invalidate session & clear auth: .invalidateHttpSession(true).clearAuthentication(true)
+            // Following lines can also be done by SecurityConfig .logout() - invalidate session & clear auth: .invalidateHttpSession(true).clearAuthentication(true)
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
                 new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, auth);

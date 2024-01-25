@@ -31,3 +31,18 @@ public class BookingController {
     }
     
 }
+
+/* For postman test. Guest ID is not being sent, always 0. Just like I'm not sending booking id when saving booking.
+{
+    "hotelId": 1,
+    "hotelRoomId": 1,
+    "noRooms": 2,
+    "guests": [
+        {"Id": 52, "firstName": "f", "lastName": "l", "gender": "M", "age": 21},
+        {"guestId": 53}
+    ],
+    "price": 2,
+    "discount": 2,
+    "roomType": 2
+}
+*/

@@ -69,6 +69,7 @@ $(document).ready(function() {
         });  // end iteration of rows
     });  // end filterBtn
     
+    /*
     // Opens modal upon clicking button. Not using it now. Instead click image.
     $("#tblHotel").on("click", ".open-my-Modal", function() {
         var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
@@ -89,6 +90,7 @@ $(document).ready(function() {
             });
         });
     });
+    */
     
     // Opens modal upon clicking image.
     $("#tblHotel").on("click", ".hotelDetailOnImage", function() {
@@ -105,7 +107,7 @@ $(document).ready(function() {
         var hotelId = $(this).attr("attrHotelId");  // grab hotelId to call getRoomTypesOfHotel/hotelId
         $.get("getRoomTypesOfHotel/" + hotelId, function(res) {  // call getRoomTypesOfHotel of TravelGig (this project), get response.
             $.each(res, function(idx, item) {  // for each roomtype
-                $('#select_roomTypes').append($("<option>", {  // append as selection option
+                $("#select_roomTypes").append($("<option>", {  // append as selection option
                     value: item.typeId,
                     text: item.name
                 }));
@@ -128,6 +130,8 @@ $(document).ready(function() {
     });
     
     
+    var currentlySelectedRoomTypeId = 0;  // need this on completeBookingGuestInfoModal
+    
     // Upon click of searchHotelRooms hide myModal (preview for booking) and open bookingHotelRoomModal
     $("#searchHotelRooms").click(function() {
         $("#myModal").hide();
@@ -142,6 +146,8 @@ $(document).ready(function() {
         var roomTypeId = $('#select_roomTypes').find(":selected").val();
         $("#booking_roomType").val(selectedRoomType_Text);
         // booking_customerMobile - to be feteched from user info
+        
+        currentlySelectedRoomTypeId = roomTypeId;  // need this on completeBookingGuestInfoModal
         
         var hotelId = $("#modal_hotelId").val();
         $.get("getRoomPriceAndDiscount/" + hotelId + "/" + roomTypeId, function(resRoomPriceAndDiscount) {  // call getRoomPriceAndDiscount of TravelGig (this project), get response.
@@ -185,8 +191,7 @@ $(document).ready(function() {
         $("#id_guestGender").val("");
     });  // end click of confirmBookingBtn
     
-    
-    // Upon click of id_addGuestBtn, add a guest to guest list, also append to tblGuest.
+    // On completeBookingGuestInfoModal: Upon click of id_addGuestBtn, add a guest to guest list, also append to tblGuest.
     var guestList = [];
     $("#id_addGuestBtn").click(function() {
     	var guestFirstName = $("#id_guestFirstName").val();
@@ -199,32 +204,74 @@ $(document).ready(function() {
     	
     	$("#tblGuest").append("<tr>" + "<td>" + guestFirstName + "</td>" + "<td>" + guestLastName + "</td>"
     			                     + "<td>" + guestAge + "</td>" + "<td>" + guestGender + "</td>" + "</tr>");
-        console.log(guestToAdd);
-    	console.log(guestList);
     	
-        // Post request to url localhost:8082/saveGuest of this project's GuestController.
-        // It calls GuestClient, then it calls GuestController of BookingMicroservice, which calls Service layer, do DAO work with repository, then returns.
+    	// console.log("guestToAdd:");  // string concatenation makes it [object Object]
+    	// console.log(guestToAdd);
+    	// console.log("guestList:");
+    	// console.log(guestList);
+    });
+    
+    // On completeBookingGuestInfoModal: Upon click of completeBookingGuestInfoBtn, do post call to saveBooking
+    $("#completeBookingGuestInfoBtn").click(function() {
+    	/*  Posting guest. Can't post a booking with desired guest IDs, if I post guests first.
+    	for (var gst of guestList) {  // For each guest in guestList, do post call.
+            // Post request to url localhost:8082/saveGuest of this project's GuestController.
+            // It calls GuestClient, then it calls GuestController of BookingMicroservice, which calls Service layer, do DAO work with repository, then returns.
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",  // type of response I expect
+                url: "http://localhost:8082/saveGuest",
+                data: JSON.stringify(gst),  // parse javascript object to json string
+                dataType: "json",  // type of data I'm sending
+                success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
+                    console.log("Saved:");
+                    console.log(res);
+                },
+                error: function(e) {}
+            });  // end ajax post
+    	}
+    	*/
+    	
+    	// Posting booking.
+    	var bookingToPost = {
+    		    "hotelId": $("#modal_hotelId").val(),
+    		    "noRooms": $("#booking_noRooms").val(),
+    		    "guests": guestList,
+    		    "price": $("#booking_price").text(),
+    		    "discount": $("#booking_discount").text(),
+    		    "roomType": currentlySelectedRoomTypeId
+    	}
+    	
+        // Post request to url localhost:8082/saveBooking of this project's BookingController.
+        // It calls BookingClient, then it calls BookingController of BookingMicroservice, which calls Service layer, do DAO work with repository, then returns.
         $.ajax({
             type: "POST",
             contentType: "application/json",  // type of response I expect
-            url: "http://localhost:8082/saveGuest",
-            data: JSON.stringify(guestToAdd),  // parse javascript object to json string
+            url: "http://localhost:8082/saveBooking",
+            data: JSON.stringify(bookingToPost),  // parse javascript object to json string
             dataType: "json",  // type of data I'm sending
             success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
-                console.log("Saved: " + res)
+                console.log("Saved:");
+                console.log(res);
             },
             error: function(e) {}
         });  // end ajax post
-        
-        
+    	
+    	guestList = [];  // empty guestList, so it won't keep adding duplicate guests on next booking.
+    	$("#tblGuest tr:not(:first)").remove();  // remove all but first row which is table header
+    	alert("Thank you for booking!");
     });
     
     $("#completeBookingGuestInfoModalClose").click(function() {
         $("#completeBookingGuestInfoModal").hide();
+        guestList = [];  // empty guestList, so it won't keep adding duplicate guests on next booking.
+        $("#tblGuest tr:not(:first)").remove();  // remove all but first row which is table header
     });
     
     $("#completeBookingGuestInfoModalCloseOnX").click(function() {
         $("#completeBookingGuestInfoModal").hide();
+        guestList = [];  // empty guestList, so it won't keep adding duplicate guests on next booking.
+        $("#tblGuest tr:not(:first)").remove();  // remove all but first row which is table header
     });
     
     
