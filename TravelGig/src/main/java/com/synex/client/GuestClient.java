@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class GuestClient {
+public class GuestClient {  // Not using it right now. Instead save guests along with booking through saveBookng.
     
     public JsonNode saveGuest(JsonNode json) {  // get json from controller
         HttpHeaders headers = new HttpHeaders();  // make sure to import from spring package, not java.net package

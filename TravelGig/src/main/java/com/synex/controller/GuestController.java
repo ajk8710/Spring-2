@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.synex.client.GuestClient;
 
 @RestController
-public class GuestController {
+public class GuestController {  // Not using it right now. Instead save guests along with booking through saveBookng.
     
     @Autowired GuestClient guestClient;
     

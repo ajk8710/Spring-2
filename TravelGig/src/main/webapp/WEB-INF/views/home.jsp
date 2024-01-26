@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -130,7 +130,8 @@ $(document).ready(function() {
     });
     
     
-    var currentlySelectedRoomTypeId = 0;  // need this on completeBookingGuestInfoModal
+    var currentlySelectedRoomTypeId = 0;  // need this on completeBookingGuestInfoModal, declare here outside of any buttons.
+    var currentlySelectedRoomId = 0;  // need this on completeBookingGuestInfoModal, declare here outside of any buttons.
     
     // Upon click of searchHotelRooms hide myModal (preview for booking) and open bookingHotelRoomModal
     $("#searchHotelRooms").click(function() {
@@ -145,25 +146,35 @@ $(document).ready(function() {
         var selectedRoomType_Text = $('#select_roomTypes').find(":selected").text();  // get selected room type
         var roomTypeId = $('#select_roomTypes').find(":selected").val();
         $("#booking_roomType").val(selectedRoomType_Text);
-        // booking_customerMobile - to be feteched from user info
+        // booking_customerMobile - may be feteched from user info
         
-        currentlySelectedRoomTypeId = roomTypeId;  // need this on completeBookingGuestInfoModal
+        currentlySelectedRoomTypeId = roomTypeId;  // need this on completeBookingGuestInfoModal, set it here.
         
         var hotelId = $("#modal_hotelId").val();
         $.get("getRoomPriceAndDiscount/" + hotelId + "/" + roomTypeId, function(resRoomPriceAndDiscount) {  // call getRoomPriceAndDiscount of TravelGig (this project), get response.
-            $.each(resRoomPriceAndDiscount, function(idx, item) {  // for each item. idx 0 is price. idx 1 is discount.
+            $.each(resRoomPriceAndDiscount, function(idx, item) {  // for each item. idx 0 is price. idx 1 is discount. idx 2 is room id. Room id represents rooms of same type and price. A room entity contains number of rooms.
                 var noRooms = 1;
-            	if (idx == 0) {
-            		if ($("#booking_noRooms").val()) {  // if noRooms has value, set to it. Else leave as 1 room.
-            			noRooms = $("#booking_noRooms").val();
-            		}
-            		$("#booking_price").text(item * noRooms);  // setting text value of span tag
-            		// console.log("Price per room: " + item);
-            	}
-            	else {  // if idx is not 0. i.e. idx is 1.
-            		$("#booking_discount").text($("#booking_price").text() * item * 0.01);
-            		// console.log("Discount %: " + item);
-            	}
+                if (idx == 0) {
+                    if ($("#booking_noRooms").val()) {  // if noRooms to book has value, set to it. Else leave as 1 room.
+                        noRooms = $("#booking_noRooms").val();
+                    }
+                    $("#booking_noRoomsToDisplay").text(noRooms);
+                    $("#booking_pricePerRoom").text(item);
+                    
+                    var start = $("#modal_checkInDate").val();
+                    var end = $("#modal_checkOutDate").val();
+                    var diffInDays = new Date(Date.parse(end) - Date.parse(start)) / 86400000;
+                    $("#booking_noNights").text(diffInDays);
+                    
+                    $("#booking_price").text(item * noRooms * diffInDays);  // setting text value of span tag
+                }
+                else if (idx == 1) {
+                    $("#booking_discountPercentage").text(item);
+                    $("#booking_discount").text($("#booking_price").text() * item * 0.01);  // setting text value of span tag
+                }
+                else if (idx == 2) {  // idx is 2
+                    currentlySelectedRoomId = Math.floor(item);  // Casting float to int. Need this room id on completeBookingGuestInfoModal.
+                }
             });
             // console.log($("#booking_price").text());
             $("#booking_price").text($("#booking_price").text() - $("#booking_discount").text());  // apply discount on total price.
@@ -181,14 +192,20 @@ $(document).ready(function() {
     
     // Upon click of confirmBookingBtn, hide bookingHotelRoomModal (comfirm for booking) and open completeBookingGuestInfoModal
     $("#confirmBookingBtn").click(function() {
-        $("#bookingHotelRoomModal").hide();
-        $("#completeBookingGuestInfoModal").toggle();
-        //alert($("#booking_noGuests").val());
-        
-        $("#id_guestFirstName").val("");  // discard previous values
-        $("#id_guestLastName").val("");
-        $("#id_guestAge").val("");
-        $("#id_guestGender").val("");
+    	var username = "${user}";  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
+    	if (!username) {  // username == "" also would work
+    		alert("Please log in to book!");
+    	}
+    	else {
+            $("#bookingHotelRoomModal").hide();
+            $("#completeBookingGuestInfoModal").toggle();
+            //alert($("#booking_noGuests").val());
+            
+            $("#id_guestFirstName").val("");  // discard previous values
+            $("#id_guestLastName").val("");
+            $("#id_guestAge").val("");
+            $("#id_guestGender").val("");
+    	}
     });  // end click of confirmBookingBtn
     
     // On completeBookingGuestInfoModal: Upon click of id_addGuestBtn, add a guest to guest list, also append to tblGuest.
@@ -204,12 +221,37 @@ $(document).ready(function() {
     	
     	$("#tblGuest").append("<tr>" + "<td>" + guestFirstName + "</td>" + "<td>" + guestLastName + "</td>"
     			                     + "<td>" + guestAge + "</td>" + "<td>" + guestGender + "</td>" + "</tr>");
+    			                     // + "<td> <a href='' class='removeGuestFromTable'>Remove</a> </td>" + "</tr>");
     	
     	// console.log("guestToAdd:");  // string concatenation makes it [object Object]
     	// console.log(guestToAdd);
     	// console.log("guestList:");
     	// console.log(guestList);
     });
+    
+    /*
+    // Remove guest button on guest table.
+    // Can’t select dynamically generated element directly. So bind event using "on".
+    // (Their id & class is same. Need "this" to refer what is selected.)
+    // .on(name of event, name of class)
+    // Of table, on click event of remove class,
+    // this = anchor tag which is clicked upon
+    // Remove parent (tr) of parent (td) of this (anchor)
+    $("#tblGuest").on("click", ".removeGuestFromTable", function() {
+    	$(this).parent().parent().remove();
+    	
+    	var indexOnGuestList = $(this).parent().siblings().eq(4).text());  // 0 1 2 3 this 4
+    	
+        // How to get value of another column:
+        // this.td.tr.tr's children which are tds.0th column.its text
+        // $(this).parent().parent().children().eq(0).text();
+        
+        // this.td.td's siblings which are tds.0th column.its text
+        // $(this).parent().siblings().eq(0).text();
+        
+        return false;  // prevent default behavior of anchor tag (redirecting)
+    });
+    */
     
     // On completeBookingGuestInfoModal: Upon click of completeBookingGuestInfoBtn, do post call to saveBooking
     $("#completeBookingGuestInfoBtn").click(function() {
@@ -234,12 +276,17 @@ $(document).ready(function() {
     	
     	// Posting booking.
     	var bookingToPost = {
-    		    "hotelId": $("#modal_hotelId").val(),
-    		    "noRooms": $("#booking_noRooms").val(),
-    		    "guests": guestList,
-    		    "price": $("#booking_price").text(),
-    		    "discount": $("#booking_discount").text(),
-    		    "roomType": currentlySelectedRoomTypeId
+    	    "hotelId": $("#modal_hotelId").val(),
+    	    "hotelRoomId": currentlySelectedRoomId,
+    	    "noRooms": $("#booking_noRooms").val(),
+    	    "guests": guestList,
+    	    "checkInDate": $("#booking_checkInDate").val(),
+    	    "checkOutDate": $("#booking_checkOutDate").val(),
+    	    "price": $("#booking_price").text(),
+    	    "discount": $("#booking_discount").text(),
+    	    "customerMobile": $("#booking_customerMobile").val(),
+    	    "roomType": currentlySelectedRoomTypeId,
+    	    "userName": "${user}"  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
     	}
     	
         // Post request to url localhost:8082/saveBooking of this project's BookingController.
@@ -285,13 +332,12 @@ $(document).ready(function() {
 <h1>Welcome to Travel Gig</h1>
 <h2>Search your desired hotel</h2>
 <%
-Object user = request.getAttribute("user");
+Object user = request.getAttribute("user");  // request.getAttribute("user") can be in java codes. ${user} can be in jsp codes.
 if(user != null){
 %>
-<span>Welcome: <%=user%></span><a href='logout'>Logout</a>
+<span>Welcome <%=user%>!</span>  <a href='login?logout'>Logout</a>
 <%}else{%>
 <a href='login'>Login</a>
-<span>Welcome: <%=user%></span><a href='login?logout'>Logout</a>
 <%}%>
 </div>
 
@@ -485,7 +531,11 @@ if(user != null){
                 <div>Check-In Date: <input readonly="true" class="form-control" type="text" id="booking_checkInDate"/></div>
                 <div>Check-Out Date: <input readonly="true" class="form-control" type="text" id="booking_checkOutDate"/></div>
                 <div>Room Type: <input readonly="true" class="form-control" type="text" id="booking_roomType"/></div>
-                <div>Discount: $<span id="booking_discount"></span></div>
+                <div>Price per Room: $<span id="booking_pricePerRoom"></span></div>
+                <div>Number of Rooms: <span id="booking_noRoomsToDisplay"></span></div>
+                <div>Number of Nights: <span id="booking_noNights"></span></div>
+                <div>Discount Percentage: <span id="booking_discountPercentage"></span>%</div>
+                <div>Discount Amount: $<span id="booking_discount"></span></div>
                 <div>Total Price: $<span id="booking_price"></span></div>
                 <div style='margin-top:20px'>
                     <button class="btn-confirm-booking btn btn-primary" id="confirmBookingBtn">Confirm Booking / Move to Guest Info</button>

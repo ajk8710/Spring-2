@@ -37,17 +37,20 @@ public class HotelServiceImpl implements HotelService {
     
     @Override
     public List<Float> getRoomPriceAndDiscount(int hotelId, int roomTypeId) {
-        List<Float> hotelIdAndRoomTypeId = new ArrayList<>();
+        // ArrayList representing: index 0: room price, index 1: room discount, index 2: room id.
+        List<Float> priceDiscountRoomId = new ArrayList<>();
         
+        // From set of hotelRooms of hotel given hotelId, find matching room type.
         Set<HotelRoom> hotelRooms = hotelRepository.findById(hotelId).orElse(null).getHotelRooms();  // may need to handle null pointer exception
         for (HotelRoom room : hotelRooms) {
-            if (room.getType().getTypeId() == roomTypeId) {
-                hotelIdAndRoomTypeId.add(room.getPrice());
-                hotelIdAndRoomTypeId.add(room.getDiscount());
-                break;
+            if (room.getType().getTypeId() == roomTypeId) {  // Once matching room type found, get its price, discount and room id.
+                priceDiscountRoomId.add(room.getPrice());    // Room id represents rooms of same type and price. A room entity contains number of rooms.
+                priceDiscountRoomId.add(room.getDiscount());
+                priceDiscountRoomId.add((float) room.getHotelRoomId());
+                break;  // Once found, break out of loop.
             }
         }
-        return hotelIdAndRoomTypeId;
+        return priceDiscountRoomId;
     }
     
 }
