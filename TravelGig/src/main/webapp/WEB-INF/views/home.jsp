@@ -22,7 +22,7 @@ $(document).ready(function() {
                     // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
                     + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
                     + "<td>" + val.starRating + "</td>"
-                    // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#myModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
+                    // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#searchHotelRoomsModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
                     + "</tr>");
             });
         });
@@ -94,7 +94,7 @@ $(document).ready(function() {
     
     // Opens modal upon clicking image.
     $("#tblHotel").on("click", ".hotelDetailOnImage", function() {
-        $("#myModal").toggle();
+        $("#searchHotelRoomsModal").toggle();
         
         var hotelName = $(this).parent().parent().children("td").eq(0).text();  // parent (column), parent (row), children of 0th.
         $("#modal_hotelName").val(hotelName);  // Sets textfields in modal
@@ -120,25 +120,25 @@ $(document).ready(function() {
     });
     
     // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
-    $("#myModalClose").click(function() {
-        $("#myModal").hide();
+    $("#searchHotelRoomsModalClose").click(function() {
+        $("#searchHotelRoomsModal").hide();
     });
     
     // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
-    $("#myModalCloseOnX").click(function() {
-        $("#myModal").hide();
+    $("#searchHotelRoomsModalCloseOnX").click(function() {
+        $("#searchHotelRoomsModal").hide();
     });
     
     
     var currentlySelectedRoomTypeId = 0;  // need this on completeBookingGuestInfoModal, declare here outside of any buttons.
     var currentlySelectedRoomId = 0;  // need this on completeBookingGuestInfoModal, declare here outside of any buttons.
     
-    // Upon click of searchHotelRooms hide myModal (preview for booking) and open bookingHotelRoomModal
-    $("#searchHotelRooms").click(function() {
-        $("#myModal").hide();
+    // Upon click of searchHotelRoomsBtn, hide searchHotelRoomsModal (preview for booking) and open bookingHotelRoomModal
+    $("#searchHotelRoomsBtn").click(function() {
+        $("#searchHotelRoomsModal").hide();
         $("#bookingHotelRoomModal").toggle();
         
-        $("#booking_hotelName").val($("#modal_hotelName").val());  // copy details from myModal
+        $("#booking_hotelName").val($("#modal_hotelName").val());  // copy details from searchHotelRoomsModal
         $("#booking_noRooms").val($("#modal_noRooms").val());
         $("#booking_noGuests").val($("#modal_noGuests").val());
         $("#booking_checkInDate").val($("#modal_checkInDate").val());
@@ -154,32 +154,49 @@ $(document).ready(function() {
         $.get("getRoomPriceAndDiscount/" + hotelId + "/" + roomTypeId, function(resRoomPriceAndDiscount) {  // call getRoomPriceAndDiscount of TravelGig (this project), get response.
             $.each(resRoomPriceAndDiscount, function(idx, item) {  // for each item. idx 0 is price. idx 1 is discount. idx 2 is room id. Room id represents rooms of same type and price. A room entity contains number of rooms.
                 var noRooms = 1;
-                if (idx == 0) {
-                    if ($("#booking_noRooms").val()) {  // if noRooms to book has value, set to it. Else leave as 1 room.
+                if (idx == 0) {  // idx 0 is price
+                    if ($("#booking_noRooms").val()) {  // if noRooms to book has value (user input), set to it. Else leave as 1 room.
                         noRooms = $("#booking_noRooms").val();
                     }
-                    $("#booking_noRoomsToDisplay").text(noRooms);
-                    $("#booking_pricePerRoom").text(item);
+                    else {
+                    	$("#booking_noRooms").val(1);
+                    }
+                    $("#booking_noRoomsOnSummary").text(noRooms);
+                    $("#booking_pricePerRoom").text(item);  // idx 0 is price
                     
                     var start = $("#modal_checkInDate").val();
                     var end = $("#modal_checkOutDate").val();
                     var diffInDays = new Date(Date.parse(end) - Date.parse(start)) / 86400000;
-                    $("#booking_noNights").text(diffInDays);
-                    
-                    $("#booking_price").text(item * noRooms * diffInDays);  // setting text value of span tag
+                    if (isNaN(diffInDays)) {
+                    	$("#booking_noNights").text("Please choose check in/out dates.");
+                    	$("#booking_price_beforeDiscount").text("Please choose check in/out dates.");
+                    }
+                    else {
+                    	$("#booking_noNights").text(diffInDays);
+                    	$("#booking_price_beforeDiscount").text(item * noRooms * diffInDays);  // setting text value of span tag
+                    }
                 }
-                else if (idx == 1) {
-                    $("#booking_discountPercentage").text(item);
-                    $("#booking_discount").text($("#booking_price").text() * item * 0.01);  // setting text value of span tag
+                else if (idx == 1) {  // idx 1 is discount
+                	$("#booking_discountPercentage").text(item);  // idx 1 is discount
+                	
+                    var start = $("#modal_checkInDate").val();
+                    var end = $("#modal_checkOutDate").val();
+                	var diffInDays = new Date(Date.parse(end) - Date.parse(start)) / 86400000;
+                	if (isNaN(diffInDays)) {
+                		$("#booking_discount").text("Please choose check in/out dates.");
+                		$("#booking_price_total").text("Please choose check in/out dates.");
+                	}
+                	else {
+                        $("#booking_discount").text($("#booking_price_beforeDiscount").text() * item * 0.01);  // setting text value of span tag
+                        $("#booking_price_total").text($("#booking_price_beforeDiscount").text() - $("#booking_discount").text());  // apply discount on total price.
+                	}
                 }
-                else if (idx == 2) {  // idx is 2
+                else {  // idx 2 is room id
                     currentlySelectedRoomId = Math.floor(item);  // Casting float to int. Need this room id on completeBookingGuestInfoModal.
                 }
-            });
-            // console.log($("#booking_price").text());
-            $("#booking_price").text($("#booking_price").text() - $("#booking_discount").text());  // apply discount on total price.
+            });  // end for-each loop
         });  // end ajax get getRoomPriceAndDiscount
-    });  // end click of searchHotelRooms
+    });  // end click of searchHotelRoomsBtn
     
     $("#bookingHotelRoomModalClose").click(function() {
         $("#bookingHotelRoomModal").hide();
@@ -190,13 +207,33 @@ $(document).ready(function() {
     });
     
     
+    // Edit button on bookingHotelRoomModal: hide bookingHotelRoomModal and re-open bookingHotelRoom modal.
+    $("#editConfirmBookingBtn").click(function() {
+        $("#bookingHotelRoomModal").hide();
+        $("#searchHotelRoomsModal").toggle();
+    });  // end click of confirmBookingBtn
+    
+    
     // Upon click of confirmBookingBtn, hide bookingHotelRoomModal (comfirm for booking) and open completeBookingGuestInfoModal
     $("#confirmBookingBtn").click(function() {
-    	var username = "${user}";  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
-    	if (!username) {  // username == "" also would work
-    		alert("Please log in to book!");
-    	}
-    	else {
+        var start = $("#modal_checkInDate").val();
+        var end = $("#modal_checkOutDate").val();
+        var diffInDays = new Date(Date.parse(end) - Date.parse(start)) / 86400000;
+        
+        var username = "${user}";  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
+        if (!username) {  // username == "" also would work
+        alert("Please log in to book.");
+        }
+        else if (isNaN(diffInDays)) {
+            alert("Please choose check in/out dates.");
+        }
+        else if (diffInDays < 1) {
+        	alert("Please choose valid check in/out dates (in before out).");
+        }
+        else if ($("#booking_noRooms").val() < 1) {
+            alert("Please choose valid number of rooms >= 1");
+        }
+        else {
             $("#bookingHotelRoomModal").hide();
             $("#completeBookingGuestInfoModal").toggle();
             //alert($("#booking_noGuests").val());
@@ -205,42 +242,61 @@ $(document).ready(function() {
             $("#id_guestLastName").val("");
             $("#id_guestAge").val("");
             $("#id_guestGender").val("");
-    	}
+        }
     });  // end click of confirmBookingBtn
+    
     
     // On completeBookingGuestInfoModal: Upon click of id_addGuestBtn, add a guest to guest list, also append to tblGuest.
     var guestList = [];
     $("#id_addGuestBtn").click(function() {
-    	var guestFirstName = $("#id_guestFirstName").val();
-    	var guestLastName = $("#id_guestLastName").val();
-    	var guestAge = parseInt($("#id_guestAge").val());
-    	var guestGender = $("#id_guestGender").val();
-    	
-    	var guestToAdd = {"firstName": guestFirstName, "lastName": guestLastName, "gender": guestGender, "age": guestAge};
-    	guestList.push(guestToAdd);
-    	
-    	$("#tblGuest").append("<tr>" + "<td>" + guestFirstName + "</td>" + "<td>" + guestLastName + "</td>"
-    			                     + "<td>" + guestAge + "</td>" + "<td>" + guestGender + "</td>" + "</tr>");
-    			                     // + "<td> <a href='' class='removeGuestFromTable'>Remove</a> </td>" + "</tr>");
-    	
-    	// console.log("guestToAdd:");  // string concatenation makes it [object Object]
-    	// console.log(guestToAdd);
-    	// console.log("guestList:");
-    	// console.log(guestList);
+        var guestFirstName = $("#id_guestFirstName").val();
+        var guestLastName = $("#id_guestLastName").val();
+        var guestAge = parseInt($("#id_guestAge").val());
+        var guestGender = $("#id_guestGender").val();
+        
+        var guestToAdd = {"firstName": guestFirstName, "lastName": guestLastName, "gender": guestGender, "age": guestAge};
+        guestList.push(guestToAdd);
+        
+        $("#tblGuest").append("<tr>" + "<td>" + guestFirstName + "</td>" + "<td>" + guestLastName + "</td>"
+    	                             + "<td>" + guestAge + "</td>" + "<td>" + guestGender + "</td>"
+                                     // + "<td> <a href='' class='removeGuestFromTable'>Remove</a> </td>" + "</tr>");
+                                     + "<td>" + "<button type='button' class='removeGuestFromTable btn btn-primary'>Remove</button>" + "</td>" + "</tr>");
+        
+        // console.log("guestToAdd:");  // string concatenation makes it [object Object]
+        // console.log(guestToAdd);
+        // console.log("guestList:");
+        // console.log(guestList);
     });
     
-    /*
+    
     // Remove guest button on guest table.
     // Can’t select dynamically generated element directly. So bind event using "on".
-    // (Their id & class is same. Need "this" to refer what is selected.)
     // .on(name of event, name of class)
-    // Of table, on click event of remove class,
-    // this = anchor tag which is clicked upon
-    // Remove parent (tr) of parent (td) of this (anchor)
+    // Of table, on click event of removeFromTable class
     $("#tblGuest").on("click", ".removeGuestFromTable", function() {
-    	$(this).parent().parent().remove();
-    	
-    	var indexOnGuestList = $(this).parent().siblings().eq(4).text());  // 0 1 2 3 this 4
+        // All remove buttons' id & class is same. Need "this" to refer which one is selected.
+        // (this = button or anchor tag that is clicked upon)
+        // Remove parent (tr) of parent (td) of this (button/anchor)
+        $(this).parent().parent().remove();
+        
+        // var indexOnGuestList = $(this).parent().siblings().eq(4).text());  // 0 1 2 3 this-button 4
+        var firstNameOfRemoved = $(this).parent().siblings().eq(0).text();
+        var lastNameOfRemoved =  $(this).parent().siblings().eq(1).text();
+        var ageOfRemoved =       $(this).parent().siblings().eq(2).text();
+        var genderOfRemoved =    $(this).parent().siblings().eq(3).text();
+        
+        var idxOfRemoved = -1;
+        for (i = 0; i < guestList.length; i++) {
+            if (guestList[i].firstName == firstNameOfRemoved && guestList[i].lastName == lastNameOfRemoved &&
+                guestList[i].age == ageOfRemoved && guestList[i].gender == genderOfRemoved) {
+                idxOfRemoved = i;
+                break;
+            }
+        }
+        guestList.splice(idxOfRemoved, 1); // splice(start, deleteCount) is javascript's remove from array.
+        
+        // console.log("guestList:");
+        // console.log(guestList);
     	
         // How to get value of another column:
         // this.td.tr.tr's children which are tds.0th column.its text
@@ -251,7 +307,7 @@ $(document).ready(function() {
         
         return false;  // prevent default behavior of anchor tag (redirecting)
     });
-    */
+    
     
     // On completeBookingGuestInfoModal: Upon click of completeBookingGuestInfoBtn, do post call to saveBooking
     $("#completeBookingGuestInfoBtn").click(function() {
@@ -282,7 +338,7 @@ $(document).ready(function() {
     	    "guests": guestList,
     	    "checkInDate": $("#booking_checkInDate").val(),
     	    "checkOutDate": $("#booking_checkOutDate").val(),
-    	    "price": $("#booking_price").text(),
+    	    "price": $("#booking_price_total").text(),
     	    "discount": $("#booking_discount").text(),
     	    "customerMobile": $("#booking_customerMobile").val(),
     	    "roomType": currentlySelectedRoomTypeId,
@@ -444,15 +500,15 @@ if(user != null){
 </div>
 </div>
 
-<!-- myModal is to preview before booking hotel room -->
-<div class="modal" id="myModal">
+<!-- searchHotelRoomsModal is to preview before booking hotel room -->
+<div class="modal" id="searchHotelRoomsModal">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Search Hotel Rooms</h4>
-        <button type="button" class="close" data-dismiss="modal" id="myModalCloseOnX">&times;</button>
+        <h4 class="modal-title">Search Rooms</h4>
+        <button type="button" class="close" data-dismiss="modal" id="searchHotelRoomsModalCloseOnX">&times;</button>
       </div>
 
       <!-- Modal body -->
@@ -467,20 +523,20 @@ if(user != null){
             <select class="form-control" id="select_roomTypes">
             </select>
             No. Rooms: <input class="form-control" type="number" id="modal_noRooms"/>
-            <input style="margin-top:25px" class="btn btn-searchHotelRooms form-control btn-primary" type="button" id="searchHotelRooms" value="SEARCH"/>           
+            <input style="margin-top:25px" class="btn btn-searchHotelRooms form-control btn-primary" type="button" id="searchHotelRoomsBtn" value="SEARCH"/>           
         </div>
         
       </div>
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal" id="myModalClose">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="searchHotelRoomsModalClose">Close</button>
       </div>
 
     </div>
   </div>
 </div>
-<!-- End myModal -->
+<!-- End searchHotelRoomsModal -->
 
 <!-- hotelRoomsModal is temporary setup. Not using for now. -->
 <div class="modal" id="hotelRoomsModal">
@@ -526,24 +582,25 @@ if(user != null){
                 <div><input class="form-control" type="hidden" id="booking_hotelRoomId"/></div>
                 <div>Hotel Name: <input readonly="true" class="form-control" type="text" id="booking_hotelName"/></div>
                 <div>Customer Mobile: <input class="form-control" type="text" id="booking_customerMobile"/></div>
-                <div id="noGuestsDiv">No. Guests: <input readonly="true" class="form-control" type="number" id="booking_noGuests"/></div>
+                <div id="noGuestsDiv">No. Guests: <input class="form-control" type="number" id="booking_noGuests"/></div>
                 <div>No. Rooms: <input readonly="true" class="form-control" type="number" id="booking_noRooms"/></div>
                 <div>Check-In Date: <input readonly="true" class="form-control" type="text" id="booking_checkInDate"/></div>
                 <div>Check-Out Date: <input readonly="true" class="form-control" type="text" id="booking_checkOutDate"/></div>
                 <div>Room Type: <input readonly="true" class="form-control" type="text" id="booking_roomType"/></div>
                 <div>Price per Room: $<span id="booking_pricePerRoom"></span></div>
-                <div>Number of Rooms: <span id="booking_noRoomsToDisplay"></span></div>
+                <div>Number of Rooms: <span id="booking_noRoomsOnSummary"></span></div>
                 <div>Number of Nights: <span id="booking_noNights"></span></div>
+                <div>Price Before Discount: $<span id="booking_price_beforeDiscount"></span></div>
                 <div>Discount Percentage: <span id="booking_discountPercentage"></span>%</div>
                 <div>Discount Amount: $<span id="booking_discount"></span></div>
-                <div>Total Price: $<span id="booking_price"></span></div>
+                <div>Total Price: $<span id="booking_price_total"></span></div>
                 <div style='margin-top:20px'>
                     <button class="btn-confirm-booking btn btn-primary" id="confirmBookingBtn">Confirm Booking / Move to Guest Info</button>
-                    <button class="btn btn-primary">Edit</button>
+                    <button class="btn btn-primary" id="editConfirmBookingBtn">Edit</button>
                 </div>
             </div>          
       </div>
-
+      
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal" id="bookingHotelRoomModalClose">Close</button>
@@ -592,7 +649,7 @@ if(user != null){
 				<h5>Your Guests:</h5>
                 <div id="listGuest" class="col-12 border rounded">
                     <table id="tblGuest" border="1" class="col-12 border rounded">
-                        <tr> <th>First Name</th> <th>Last Name</th> <th>Age</th> <th>Gender</th> </tr>
+                        <tr> <th>First Name</th> <th>Last Name</th> <th>Age</th> <th>Gender</th> <th>Remove</th></tr>
                     </table>
                 </div>
                 
