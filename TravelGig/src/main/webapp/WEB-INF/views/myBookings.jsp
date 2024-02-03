@@ -15,12 +15,36 @@
 
 <script>
 $(document).ready(function() {
+
+    var userName = "${username}";  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
     
+    $.get("findAllByUserName/" + userName, function(res) {  // call findAllByUserName of TravelGig (this project), get response.
+        $("#tblBookings tr:not(:first)").remove();  // remove all but first row which is table header
+        console.log(res);
+        
+        $.each(res, function(idx, val) {
+        	var hotelName = "n/a";
+            $.get("findHotelById/" + val.hotelId, function(hotel) {  // call findHotelById of TravelGig (this project), get response.
+            	$.get("findRoomTypeById/" + val.roomType, function(roomType) {  // call findHotelById of TravelGig (this project), get response.
+            	
+            	$("#tblBookings").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
+                    + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
+                    + "<td>" + roomType.name + "</td>"
+                    // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
+                    // + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
+                    + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
+                    // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#searchHotelRoomsModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
+                    + "</tr>");
+            	});
+            });
+        });
+    });
 });
 </script>
 
 </head>
 <body>
+<div class="container" style="margin-left:100px">
 <h1>My Bookings</h1>
 <%
 Object username = request.getAttribute("username");  // request.getAttribute("username") can be in java codes. ${username} can be in jsp codes.
@@ -30,6 +54,23 @@ if(username != null){
 <%}else{%>
 <a href='login'>Login</a>
 <%}%>
+</div>
+
+<br/><br/>
+<div class="row">
+
+<div class="col-11 border rounded" style="margin-left:50px;">
+    <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>List of My Bookings:</div>   
+    
+    <div id="listHotel">
+        <table class="table table-striped table-primary", id="tblBookings" border="1">
+            <!-- <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> <th>Detail</th> </tr> -->
+            <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> </tr>
+        </table>
+    </div>
+
+</div>
+</div>
 
 
 </body>

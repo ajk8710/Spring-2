@@ -13,6 +13,11 @@ public class HotelController {
     
     @Autowired HotelClient hotelClient;
     
+    @GetMapping("findHotelById/{id}")
+    public JsonNode findHotelById(@PathVariable int id) {
+        return hotelClient.findHotelById(id);
+    }
+    
     @GetMapping("searchHotel/{searchString}")
     public JsonNode searchHotel(@PathVariable String searchString) {
         return hotelClient.searchHotel(searchString);

@@ -12,6 +12,7 @@
 
 <script>
 $(document).ready(function() {
+	
     $("#searchBtn").click(function() {  // upon click of searchBtn
         var searchString = $("#searchLocation").val();
         $.get("searchHotel/" + searchString, function(res) {  // call searchHotel of TravelGig (this project), get response.

@@ -19,6 +19,21 @@ public class HotelServiceImpl implements HotelService {
     @Autowired HotelRepository hotelRepository;
     
     @Override
+    public Hotel save(Hotel hotel) {
+        return hotelRepository.save(hotel);
+    }
+
+    @Override
+    public Hotel findById(int id) {
+        return hotelRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean existById(int id) {
+        return hotelRepository.existsById(id);
+    }
+    
+    @Override
     public List<Hotel> searchHotel(String searchString) {
         searchString = "%" + searchString + "%";  // wrapping with % means contains
         return hotelRepository.findByHotelNameLikeIgnoreCaseOrAddressLikeIgnoreCaseOrCityLikeIgnoreCaseOrStateLikeIgnoreCase(searchString, searchString, searchString, searchString);

@@ -28,4 +28,16 @@ public class BookingClient {
         return returnObj;
     }
     
+    public JsonNode findAllByUserName(String userName) {
+        // RestTemplate can make requests to another project on another port.
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Object> responseEntity =  // get reseponseEntity from API of another project (microservice)
+                restTemplate.getForEntity("http://localhost:8083/findAllByUserName/" + userName, Object.class);  // Response is List<Booking>
+        Object obj = responseEntity.getBody();  // get body of responseEntity
+        
+        ObjectMapper mapper = new ObjectMapper();  // let mapper to convert it to json
+        JsonNode returnObj = mapper.convertValue(obj, JsonNode.class);  // JsonNode can represent any json.
+        return returnObj;
+    }
+    
 }

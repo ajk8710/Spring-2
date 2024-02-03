@@ -28,7 +28,7 @@ public class GuestController {
     }
     
     @GetMapping("existGuestById/{id}")
-    boolean existById(@PathVariable int id) {
+    public boolean existById(@PathVariable int id) {
         return guestService.existById(id);
     }
     
