@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Home Page of Travel Gig</title>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<title>Home Page of Travel Gig</title>
 
 <script>
 $(document).ready(function() {
@@ -220,9 +221,10 @@ $(document).ready(function() {
         var end = $("#modal_checkOutDate").val();
         var diffInDays = new Date(Date.parse(end) - Date.parse(start)) / 86400000;
         
-        var username = "${user}";  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
-        if (!username) {  // username == "" also would work
-        alert("Please log in to book.");
+        var userName = "${username}";  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
+        console.log("userName: " + userName);
+        if (!userName) {  // userName == "" also would work
+            alert("Please log in to book.");
         }
         else if (isNaN(diffInDays)) {
             alert("Please choose check in/out dates.");
@@ -338,11 +340,13 @@ $(document).ready(function() {
     	    "guests": guestList,
     	    "checkInDate": $("#booking_checkInDate").val(),
     	    "checkOutDate": $("#booking_checkOutDate").val(),
+    	    "status": "UPCOMING",
     	    "price": $("#booking_price_total").text(),
     	    "discount": $("#booking_discount").text(),
     	    "customerMobile": $("#booking_customerMobile").val(),
     	    "roomType": currentlySelectedRoomTypeId,
-    	    "userName": "${user}"  // without quotations, it thinks evaluated ${user} is a variable and complains variable user is not found.
+    	    "userName": "${username}",  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
+    	    "userEmail": "${userEmail}"
     	}
     	
         // Post request to url localhost:8082/saveBooking of this project's BookingController.
@@ -388,10 +392,10 @@ $(document).ready(function() {
 <h1>Welcome to Travel Gig</h1>
 <h2>Search your desired hotel</h2>
 <%
-Object user = request.getAttribute("user");  // request.getAttribute("user") can be in java codes. ${user} can be in jsp codes.
-if(user != null){
+Object username = request.getAttribute("username");  // request.getAttribute("username") can be in java codes. ${username} can be in jsp codes.
+if(username != null){
 %>
-<span>Welcome <%=user%>!</span>  <a href='login?logout'>Logout</a>
+<span>Welcome <%=username%>! &nbsp; <a href='login?logout'>Logout</a> &nbsp; <a href='mybookings'>My Bookings</a></span>
 <%}else{%>
 <a href='login'>Login</a>
 <%}%>
