@@ -40,4 +40,16 @@ public class BookingClient {
         return returnObj;
     }
     
+    public void deleteBookingById(int id) {
+        // RestTemplate can make requests to another project on another port.
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.delete("http://localhost:8083/deleteBookingById/" + id, Object.class);
+    }
+    
+    public void cancelBookingById(int id) {
+        // RestTemplate can make requests to another project on another port.
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.delete("http://localhost:8083/cancelBookingById/" + id, Object.class);
+    }
+    
 }

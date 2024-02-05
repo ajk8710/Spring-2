@@ -35,6 +35,11 @@ public class BookingServiceImpl implements BookingService {
     }
     
     @Override
+    public void deleteById(int id) {
+        bookingRepository.deleteById(id);
+    }
+    
+    @Override
     public boolean existById(int id) {
         return bookingRepository.existsById(id);
     }
@@ -61,6 +66,13 @@ public class BookingServiceImpl implements BookingService {
         }
         
         return bookingRepository.findAllByUserName(userName);
+    }
+    
+    @Override
+    public void cancelBookingById(int id) {
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        booking.setStatus("CANCELED");
+        bookingRepository.save(booking);
     }
     
 }

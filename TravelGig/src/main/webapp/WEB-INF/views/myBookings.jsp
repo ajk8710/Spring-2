@@ -15,9 +15,9 @@
 
 <script>
 $(document).ready(function() {
-
-    var userName = "${username}";  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
     
+	// Find all bookings by username and append to appropriate tables, upcoming, completed, canceled.
+    var userName = "${username}";  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
     $.get("findAllByUserName/" + userName, function(res) {  // call findAllByUserName of TravelGig (this project), get response.
         $("#tblBookingsCompleted tr:not(:first)").remove();  // remove all but first row which is table header
         console.log(res);
@@ -25,14 +25,14 @@ $(document).ready(function() {
         $.each(res, function(idx, val) {
             var hotelName = "n/a";
             $.get("findHotelById/" + val.hotelId, function(hotel) {  // call findHotelById of TravelGig (this project), get response.
-                $.get("findRoomTypeById/" + val.roomType, function(roomType) {  // call findHotelById of TravelGig (this project), get response.
+                $.get("findRoomTypeById/" + val.roomType, function(roomType) {  // call findRoomTypeById of TravelGig (this project), get response.
                     
                     if (val.status == "UPCOMING") {
                         $("#tblBookingsUpcoming").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
                             + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
                             + "<td>" + roomType.name + "</td>"
                             + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
-                            + "<td>" + "<button type='button' class='cancel-booking' attrHotelId='" + val.bookingId + "'>Cancel Booking</button>" + "</td>"
+                            + "<td>" + "<button type='button' class='cancel-booking' attrBookingId='" + val.bookingId + "'>Cancel Booking</button>" + "</td>"
                         + "</tr>");
                     }
                 	
@@ -43,7 +43,15 @@ $(document).ready(function() {
                             + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
                         + "</tr>");
                     }
-                
+                    
+                    if (val.status == "CANCELED") {
+                        $("#tblBookingsCanceled").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
+                            + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
+                            + "<td>" + roomType.name + "</td>"
+                            + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
+                        + "</tr>");
+                    }
+                    
                 });  // end ajax get findRoomTypeById
             });  // end ajax get findHotelById
         });  // end for each
@@ -55,22 +63,26 @@ $(document).ready(function() {
     // .on(name of event, name of class)
     // Of table, on click event of cancel-booking class
     $("#tblBookingsUpcoming").on("click", ".cancel-booking", function() {
+    	var bookingId = $(this).attr("attrBookingId");
         $.ajax({
-            type: "DELETE",
-            url: "http://localhost:8082/deleteBookingById",
-            success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
+            type: "DELETE",  // It's delete call, but it actually updates by setting status to CANCELED.
+            url: "http://localhost:8082/cancelBookingById/" + bookingId,  // call cancelBookingById of TravelGig (this project)
+            success: function(res) {  // upon success of post request, run this function which takes response.
                 // Every remove button's id & class is same. Need "this" to refer which one is selected.
                 // (this = button or anchor tag that is clicked upon)
                 // Remove parent (tr) of parent (td) of this (button/anchor)
-            	$(this).parent().parent().remove();
+            	// $(this).parent().parent().remove();
+            	// $(this).closest("tr").remove();
+            	location.reload();  // refreshes the page.
+                alert("Booking canceled");
             },
             error: function(e) {
             	alert("Cannot cancel at this time. Please contact customer service.")
             }
-        });  // end ajax post
+        });  // end ajax delete
         
         // return false;  // prevent default behavior of anchor tag (redirecting)
-    });
+    });  // end cancel-booking button click
     
 });  // end doc ready
 </script>
@@ -105,11 +117,15 @@ if(username != null){
         <table class="table table-striped table-primary", id="tblBookingsCompleted" border="1">
             <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> </tr>
         </table>
+        
+        <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>Canceled</div>   
+        <table class="table table-striped table-primary", id="tblBookingsCanceled" border="1">
+            <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> </tr>
+        </table>
     </div>
-
+    
 </div>
 </div>
-
 
 </body>
 </html>

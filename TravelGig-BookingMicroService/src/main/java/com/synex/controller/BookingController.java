@@ -3,6 +3,7 @@ package com.synex.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,11 @@ public class BookingController {
         return bookingService.findById(id);
     }
     
+    @DeleteMapping("deleteBookingById/{id}")
+    public void deleteById(@PathVariable int id) {
+        bookingService.deleteById(id);
+    }
+    
     @GetMapping("existBookingById/{id}")
     public boolean existById(@PathVariable int id) {
         return bookingService.existById(id);
@@ -42,6 +48,11 @@ public class BookingController {
     @GetMapping("findAllByUserName2")
     public List<Booking> findAllByUserName2(@RequestParam String userName) {
         return bookingService.findAllByUserName(userName);
+    }
+    
+    @DeleteMapping("cancelBookingById/{id}")  // Does not delete, but updates status to CANCELED
+    public void cancelBookingById(@PathVariable int id) {
+        bookingService.cancelBookingById(id);
     }
     
 }

@@ -29,7 +29,7 @@ public class RoomTypeController {
     }
     
     @GetMapping("findAllRoompTypes")
-    public List<RoomType> findAll(@PathVariable int id) {
+    public List<RoomType> findAll() {
         return roomTypeService.findAll();
     }
     
@@ -38,7 +38,7 @@ public class RoomTypeController {
         return roomTypeService.existById(id);
     }
     
-    @DeleteMapping("deleteRoomTypeById")
+    @DeleteMapping("deleteRoomTypeById/{id}")
     public void deleteById(@PathVariable int id) {
         roomTypeService.deleteById(id);
     }
