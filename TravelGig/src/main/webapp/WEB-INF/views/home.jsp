@@ -277,7 +277,7 @@ $(document).ready(function() {
     // .on(name of event, name of class)
     // Of table, on click event of removeFromTable class
     $("#tblGuest").on("click", ".removeGuestFromTable", function() {
-        // All remove buttons' id & class is same. Need "this" to refer which one is selected.
+        // Every remove button's id & class is same. Need "this" to refer which one is selected.
         // (this = button or anchor tag that is clicked upon)
         // Remove parent (tr) of parent (td) of this (button/anchor)
         $(this).parent().parent().remove();

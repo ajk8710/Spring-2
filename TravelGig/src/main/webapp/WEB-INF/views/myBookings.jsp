@@ -19,27 +19,60 @@ $(document).ready(function() {
     var userName = "${username}";  // without quotations, it thinks evaluated ${username} is a variable and complains variable username is not found.
     
     $.get("findAllByUserName/" + userName, function(res) {  // call findAllByUserName of TravelGig (this project), get response.
-        $("#tblBookings tr:not(:first)").remove();  // remove all but first row which is table header
+        $("#tblBookingsCompleted tr:not(:first)").remove();  // remove all but first row which is table header
         console.log(res);
         
         $.each(res, function(idx, val) {
-        	var hotelName = "n/a";
+            var hotelName = "n/a";
             $.get("findHotelById/" + val.hotelId, function(hotel) {  // call findHotelById of TravelGig (this project), get response.
-            	$.get("findRoomTypeById/" + val.roomType, function(roomType) {  // call findHotelById of TravelGig (this project), get response.
-            	
-            	$("#tblBookings").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
-                    + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
-                    + "<td>" + roomType.name + "</td>"
-                    // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
-                    // + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
-                    + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
-                    // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#searchHotelRoomsModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
-                    + "</tr>");
-            	});
-            });
-        });
+                $.get("findRoomTypeById/" + val.roomType, function(roomType) {  // call findHotelById of TravelGig (this project), get response.
+                    
+                    if (val.status == "UPCOMING") {
+                        $("#tblBookingsUpcoming").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
+                            + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
+                            + "<td>" + roomType.name + "</td>"
+                            + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
+                            + "<td>" + "<button type='button' class='cancel-booking' attrHotelId='" + val.bookingId + "'>Cancel Booking</button>" + "</td>"
+                        + "</tr>");
+                    }
+                	
+                    if (val.status == "COMPLETED") {
+                        $("#tblBookingsCompleted").append("<tr>" + "<td>" + hotel.hotelName + "</td>" + "<td>" + val.noRooms + "</td>"
+                            + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
+                            + "<td>" + roomType.name + "</td>"
+                            + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
+                        + "</tr>");
+                    }
+                
+                });  // end ajax get findRoomTypeById
+            });  // end ajax get findHotelById
+        });  // end for each
+    });  // end ajax get findAllByUserName
+    
+    
+    // cancel-booking button on upcoming bookings table.
+    // Can’t select dynamically generated element directly. So bind event using "on".
+    // .on(name of event, name of class)
+    // Of table, on click event of cancel-booking class
+    $("#tblBookingsUpcoming").on("click", ".cancel-booking", function() {
+        $.ajax({
+            type: "DELETE",
+            url: "http://localhost:8082/deleteBookingById",
+            success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
+                // Every remove button's id & class is same. Need "this" to refer which one is selected.
+                // (this = button or anchor tag that is clicked upon)
+                // Remove parent (tr) of parent (td) of this (button/anchor)
+            	$(this).parent().parent().remove();
+            },
+            error: function(e) {
+            	alert("Cannot cancel at this time. Please contact customer service.")
+            }
+        });  // end ajax post
+        
+        // return false;  // prevent default behavior of anchor tag (redirecting)
     });
-});
+    
+});  // end doc ready
 </script>
 
 </head>
@@ -60,11 +93,16 @@ if(username != null){
 <div class="row">
 
 <div class="col-11 border rounded" style="margin-left:50px;">
-    <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>List of My Bookings:</div>   
+    <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>List of My Bookings</div>   
     
-    <div id="listHotel">
-        <table class="table table-striped table-primary", id="tblBookings" border="1">
-            <!-- <tr> <th>Name</th> <th>Address</th> <th>City</th> <th>State</th> <th>Price</th> <th>Image</th> <th>Rating</th> <th>Detail</th> </tr> -->
+    <div id="listBookings">
+        <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>Upcoming</div>   
+        <table class="table table-striped table-primary", id="tblBookingsUpcoming" border="1">
+            <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> <th>Cancel</th> </tr>
+        </table>
+        
+        <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>Completed</div>   
+        <table class="table table-striped table-primary", id="tblBookingsCompleted" border="1">
             <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> </tr>
         </table>
     </div>

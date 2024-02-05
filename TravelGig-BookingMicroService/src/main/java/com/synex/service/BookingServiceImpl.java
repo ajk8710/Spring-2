@@ -53,7 +53,7 @@ public class BookingServiceImpl implements BookingService {
             LocalDate checkInDate = LocalDate.of(Integer.parseInt(booking.getCheckInDate().substring(0, 4)),
                                                  Integer.parseInt(booking.getCheckInDate().substring(5, 7)),
                                                  Integer.parseInt(booking.getCheckInDate().substring(8)));
-            System.out.println("Upcoming Booking ID: " + id + ", CheckinDate: " + checkInDate);
+            // System.out.println("Upcoming Booking ID: " + id + ", CheckinDate: " + checkInDate);
             if (checkInDate.isBefore(LocalDate.now())) {
                 booking.setStatus("COMPLETED");
                 bookingRepository.save(booking);
