@@ -41,6 +41,7 @@ $(document).ready(function() {
                             + "<td>" + val.checkInDate + "</td>" + "<td>" + val.checkOutDate + "</td>"
                             + "<td>" + roomType.name + "</td>"
                             + "<td>" + val.status + "</td>" + "<td>" + val.price + "</td>"
+                            + "<td>" + "<button type='button' class='write-review' attrBookingId='" + val.bookingId + "'>Write Review</button>" + "</td>"
                         + "</tr>");
                     }
                     
@@ -84,6 +85,46 @@ $(document).ready(function() {
         // return false;  // prevent default behavior of anchor tag (redirecting)
     });  // end cancel-booking button click
     
+    
+    // Upon click of write-review button on completed bookings table, open modal.
+    $("#tblBookingsCompleted").on("click", ".write-review", function() {
+        $("#writeReviewsModal").toggle();
+    	$("#review_bookingId").val($(this).attr("attrBookingId"));  // save currently selected bookingId
+    });
+    
+    $("#writeReviewsModalClose").click(function() {
+        $("#writeReviewsModal").hide();
+    });
+    
+    $("#writeReviewsModalCloseOnX").click(function() {
+        $("#writeReviewsModal").hide();
+    });
+    
+    
+    // Upon click of submit review button, save review.
+    $("#id_submitReviewBtn").click(function() {    
+        var reviewToPost = {
+            "booking": {"bookingId": $("#review_bookingId").val()},
+            "text": $("#id_reviewText").val(),
+            "overallRating": parseInt($("#starValue").text())
+        }
+        
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",  // type of response I expect
+            url: "http://localhost:8082/saveReview",
+            data: JSON.stringify(reviewToPost),  // parse javascript object to json string
+            dataType: "json",  // type of data I'm sending
+            success: function(res) {  // upon success of post request, run this function which takes response.
+                alert("Thank you for your review!");
+                console.log($("#review_bookingId").val());
+                console.log("Saved:");
+                console.log(res);
+            },
+            error: function(e) {}
+        });  // end ajax post
+    });  // end submit review button click
+    
 });  // end doc ready
 </script>
 
@@ -115,7 +156,7 @@ if(username != null){
         
         <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>Completed</div>   
         <table class="table table-striped table-primary", id="tblBookingsCompleted" border="1">
-            <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> </tr>
+            <tr> <th>Hotel</th> <th>Number of Rooms</th> <th>Check In</th> <th>Check Out</th> <th>Room Type</th> <th>Booking Status</th> <th>Total Price</th> <th>Write Review</th> </tr>
         </table>
         
         <div style='text-align:center;font-size:20px;font-family:"Trebuchet MS", Helvetica, sans-serif'>Canceled</div>   
@@ -127,5 +168,57 @@ if(username != null){
 </div>
 </div>
 
+<!-- writeReviewsModal is to write a review of a hotel -->
+<div class="modal" id=writeReviewsModal>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Write Your Review</h4>
+        <button type="button" class="close" data-dismiss="modal" id="writeReviewsModalCloseOnX">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" id="writeReviews_modalBody">
+            <div class="col">
+                <div><input class="form-control" type="hidden" id="review_bookingId"/></div>
+                
+                <div class="container border rounded" style="margin:auto;padding:50px;margin-top:50px;margin-bottom:50px">
+                    <div class="form">
+                        <div class="slidecontainer">
+                            Your Rating
+                            <input type="range" min="1" max="10" value="10" class="slider" id="starRange">
+                            <p>Stars: <span id="starValue"></span></p>
+                        </div>
+                        <div>
+                            Your Review <textarea class="form-control" id="id_reviewText"></textarea>
+                        </div>
+                    </div>  <!-- end form -->
+                    <br/>
+                    <input class="btn-sm btn-primary" type="button" id="id_submitReviewBtn" value="Submit Review"/>
+                </div>  <!-- end container border rounded -->
+                
+            </div>  <!-- end modal col -->
+      </div>  <!-- end modal body -->
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="writeReviewsModalClose">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- End writeReviewsModal -->
+
+<script>
+var slider = document.getElementById("starRange");
+var output = document.getElementById("starValue");
+output.innerHTML = slider.value;
+slider.oninput = function() {
+    output.innerHTML = this.value;
+}
+</script>
 </body>
 </html>

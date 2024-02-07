@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Transient;
 
 @Entity
 public class Review {
@@ -22,9 +21,6 @@ public class Review {
     private int bookingProcessRating;
     private int wholeExpRating;
     private double overallRating;
-    
-    @Transient
-    private boolean exists;
     
     public int getReviewId() {
         return reviewId;
@@ -73,12 +69,6 @@ public class Review {
     }
     public void setOverallRating(double overallRating) {
         this.overallRating = overallRating;
-    }
-    public boolean isExists() {
-        return exists;
-    }
-    public void setExists(boolean exists) {
-        this.exists = exists;
     }
     
 }

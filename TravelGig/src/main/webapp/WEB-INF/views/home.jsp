@@ -21,9 +21,9 @@ $(document).ready(function() {
                 $("#tblHotel").append("<tr>" + "<td>" + val.hotelName + "</td>" + "<td>" + val.address + "</td>"
                     + "<td>" + val.city + "</td>" + "<td>" + val.state + "</td>"
                     + "<td>" + val.averagePrice + "</td>"
-                    // + "<td>" + "<a class='hotelDetailOnImage' href='#'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
+                    // + "<td>" + "<a href='#' class='hotelDetailOnImage'><img length=300 width=200 src='" + val.imageURL + "'></img></a>" + "</td>"
                     + "<td>" + "<img length=300 width=200 src='" + val.imageURL + "' class='hotelDetailOnImage' attrHotelId='" + val.hotelId + "'></img>" + "</td>"
-                    + "<td>" + val.starRating + "</td>"
+                    + "<td>" + "<a href='#' class='hotelReviewsLink' attrHotelId='" + val.hotelId + "'>" +  val.starRating + "</a>" + "</td>"
                     // + "<td>" + "<button type='button' class='open-my-Modal btn btn-primary' data-toggle='modal' data-target='#searchHotelRoomsModal' attrHotelId='" + val.hotelId + "'>Hotel Detail</button>" + "</td>"
                     + "</tr>");
             });
@@ -359,15 +359,19 @@ $(document).ready(function() {
             data: JSON.stringify(bookingToPost),  // parse javascript object to json string
             dataType: "json",  // type of data I'm sending
             success: function(res) {  // upon success of post request, run this function which takes response. Response is saved Guest object.
-                console.log("Saved:");
-                console.log(res);
+            	alert("Thank you for booking!");
+            	// console.log("Saved:");
+                // console.log(res);
             },
             error: function(e) {}
         });  // end ajax post
     	
     	guestList = [];  // empty guestList, so it won't keep adding duplicate guests on next booking.
     	$("#tblGuest tr:not(:first)").remove();  // remove all but first row which is table header
-    	alert("Thank you for booking!");
+        $("#id_guestFirstName").val();  // reset input fields for the guest
+        $("#id_guestLastName").val();
+        $("#id_guestAge").val();
+        $("#id_guestGender").val();
     });
     
     $("#completeBookingGuestInfoModalClose").click(function() {
@@ -382,6 +386,32 @@ $(document).ready(function() {
         $("#tblGuest tr:not(:first)").remove();  // remove all but first row which is table header
     });
     
+    
+    // Opens modal upon clicking hotel rating.
+    $("#tblHotel").on("click", ".hotelReviewsLink", function() {
+        $("#hotelReviewsModal").toggle();
+        
+        var hotelId = $(this).attr("attrHotelId");
+        $.get("findAllReviewsByHotelId/" + hotelId, function(res) {  // call findAllReviewsByHotelId of TravelGig (this project), get response.
+            $("#tblReviews tr:not(:first)").remove();  // remove all but first row which is table header
+            $.each(res, function(idx, val) {
+                $("#tblReviews").append("<tr>" + "<td>" + val.booking.userName + "</td>" + "<td>" + val.overallRating + "</td>"
+                    + "<td>" + val.text + "</td>"
+                    + "</tr>");
+            });
+        });
+        return false;
+    });
+    
+    $("#hotelReviewsModalClose").click(function() {
+        $("#hotelReviewsModal").hide();
+        $("#tblReviews tr:not(:first)").remove();  // remove all but first row which is table header
+    });
+    
+    $("#hotelReviewsModalCloseOnX").click(function() {
+        $("#hotelReviewsModal").hide();
+        $("#tblReviews tr:not(:first)").remove();  // remove all but first row which is table header
+    });
     
     
 });  // end dom ready
@@ -651,10 +681,10 @@ if(username != null){
 				    <input class="btn-sm btn-primary" type="button" id="id_addGuestBtn" value="Add Guest"/>
 				</div>  <!-- end container border rounded -->
 				
-				<h5>Your Guests:</h5>
+				<h5>Your Guests</h5>
                 <div id="listGuest" class="col-12 border rounded">
                     <table id="tblGuest" border="1" class="col-12 border rounded">
-                        <tr> <th>First Name</th> <th>Last Name</th> <th>Age</th> <th>Gender</th> <th>Remove</th></tr>
+                        <tr> <th>First Name</th> <th>Last Name</th> <th>Age</th> <th>Gender</th> <th>Remove</th> </tr>
                     </table>
                 </div>
                 
@@ -673,6 +703,40 @@ if(username != null){
   </div>
 </div>
 <!-- End completeBookingGuestInfoModal -->
+
+<!-- hotelReviewsModal is to view reviews of a hotel -->
+<div class="modal" id=hotelReviewsModal>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Hotel Reviews</h4>
+        <button type="button" class="close" data-dismiss="modal" id="hotelReviewsModalCloseOnX">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" id="hotelReivews_modalBody">
+            <div class="col">
+                
+                <div class="container border rounded" style="margin:auto;padding:50px;margin-top:50px;margin-bottom:50px">
+                    <table id="tblReviews" border="1" class="col-12 border rounded">
+                        <tr> <th>UserName</th> <th>Rating</th> <th>Review</th> </tr>
+                    </table>
+                </div>  <!-- end container border rounded -->
+                
+            </div>  <!-- end modal col -->
+      </div>  <!-- end modal body -->
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="hotelReviewsModalClose">Close</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- End hotelReviewsModal -->
 
 <script>
 var slider = document.getElementById("priceRange");
