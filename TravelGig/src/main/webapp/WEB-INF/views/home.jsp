@@ -439,7 +439,7 @@ if(username != null){
 %>
 <span>Welcome <%=username%>! &nbsp; <a href='login?logout'>Logout</a> &nbsp; <a href='mybookings'>My Bookings</a></span>
 <%}else{%>
-<a href='login'>Login</a>
+<a href='login'>Login</a> &nbsp; <a href='register'>Sign Up</a>
 <%}%>
 </div>
 

@@ -49,7 +49,7 @@ public class SecurityConfig {
 			.apply(MyCustomDsl.customDsl())  // MyCustomDsl just setting http.csrf().disable(). This could be done directly in SecurityConfig.
 			.flag(true).and()  // This flag is not doing anything right now.
 			.authorizeRequests()  // set security for following
-				.requestMatchers("/", "/home").permitAll().and()  // home can be reached without security
+				.requestMatchers("/", "/home", "/register").permitAll().and()  // home and register can be reached without security
 			      .exceptionHandling().accessDeniedPage("/accessDeniedPage").and()
 			.authorizeRequests()  // set security for following, these urls can only be reached with security
 				.requestMatchers("/mybookings", "/userProfile", "/test").hasAnyAuthority("ADMIN", "USER").and()

@@ -1,6 +1,8 @@
 package com.synex.controller;
 
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,15 +12,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.synex.domain.Role;
 import com.synex.domain.User;
 import com.synex.repository.UserRepository;
+import com.synex.service.RoleService;
 import com.synex.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +37,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LoginController {
     
     @Autowired UserService userService;
+    @Autowired RoleService roleService;
     
     @GetMapping("login")
     public String login(@RequestParam(required = false) String logout, @RequestParam(required = false) String error,
@@ -60,9 +69,26 @@ public class LoginController {
         return "accessDeniedPage";
     }
     
-    @GetMapping("signup")
-    public String signup(@RequestParam String userEmail, @RequestParam String userName, @RequestParam String password) {
-        return "login";
+    @GetMapping("register")
+    public String register(User user, Model model) {  // not including parameters caused "Neither BindingResult nor plain target object for bean name 'user' available as request attribute" error.
+        return "register";
+    }
+    
+    @PostMapping("saveUser")
+    public String saveUser(@ModelAttribute User user, BindingResult br, Model model) {  // BindingResult must come before Model, otherwise Model will send to error page before BindingResult do its job.
+        if (!br.hasErrors()) {
+            Role userRole = roleService.findByRoleId(2);  // USER is role id 2.
+            Set<Role> roleSet = new HashSet<>();
+            roleSet.add(userRole);
+            
+            user.setRoles(roleSet);
+            userService.save(user);
+            model.addAttribute("messageAfterLogInOut", "Thank you for sign up. Please sign in.");
+            return "login";
+        }
+        // else
+        model.addAttribute("messageAfterLogInOut", "Error occured during sign up.");
+        return "register";  // do not redirect (redirect:register), keep the info user entered and show error messages
     }
     
     @GetMapping("/user/{username}")
