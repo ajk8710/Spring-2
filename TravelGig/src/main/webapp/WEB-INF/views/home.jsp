@@ -390,16 +390,27 @@ $(document).ready(function() {
     // Opens modal upon clicking hotel rating.
     $("#tblHotel").on("click", ".hotelReviewsLink", function() {
         $("#hotelReviewsModal").toggle();
+        var sumOfUserRating = 0;
+        var numReviews = 0;
         
         var hotelId = $(this).attr("attrHotelId");
         $.get("findAllReviewsByHotelId/" + hotelId, function(res) {  // call findAllReviewsByHotelId of TravelGig (this project), get response.
-            $("#tblReviews tr:not(:first)").remove();  // remove all but first row which is table header
+        	$("#tblReviews tr:not(:first)").remove();  // remove all but first row which is table header
             $.each(res, function(idx, val) {
                 $("#tblReviews").append("<tr>" + "<td>" + val.booking.userName + "</td>" + "<td>" + val.overallRating + "</td>"
                     + "<td>" + val.text + "</td>"
                     + "</tr>");
+                sumOfUserRating += val.overallRating;
+                numReviews++;
             });
+        	
+            var avgUserRating = sumOfUserRating / numReviews;
+            $("#id_avgUserRating").text("User Rating: " + avgUserRating);
         });
+        
+        // This runs before get call finishes and return.
+        // var avgUserRating = sumOfUserRating / numReviews;
+        
         return false;
     });
     
@@ -718,10 +729,10 @@ if(username != null){
       <!-- Modal body -->
       <div class="modal-body" id="hotelReivews_modalBody">
             <div class="col">
-                
+                <h5 id="id_avgUserRating"></h5>
                 <div class="container border rounded" style="margin:auto;padding:50px;margin-top:50px;margin-bottom:50px">
                     <table id="tblReviews" border="1" class="col-12 border rounded">
-                        <tr> <th>UserName</th> <th>Rating</th> <th>Review</th> </tr>
+                        <tr> <th>UserName</th> <th>User Rating</th> <th>Review</th> </tr>
                     </table>
                 </div>  <!-- end container border rounded -->
                 
