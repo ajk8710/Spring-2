@@ -26,4 +26,9 @@ public class HomeController {
         return "contact-us";
     }
     
+    @GetMapping("select-plan")
+    public String selectPlan() {
+        return "select-plan";
+    }
+    
 }

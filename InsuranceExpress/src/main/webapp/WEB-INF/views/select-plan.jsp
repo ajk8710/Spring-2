@@ -24,45 +24,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
-    <script src="js/jquery.flexslider-min.js"></script>
-    <script src="js/easyResponsiveTabs.js"></script>
-    <script src="js/owl.carousel.js"></script>
-    <script src="js/custom.js"></script>
-    
-<script>
-$(document).ready(function() {
-    
-    // Opens modal upon clicking.
-    $(".open-fill-form-class").click(function() {
-        $("#fillFormModal").toggle();
-        return false;
-    });
-    
-    // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
-    $("#fillFormModal-close").click(function() {
-        $("#fillFormModal").hide();
-    });
-    
-    // Modal opened by anchor tag or image tag does not close without this (unlike modal opened by button).
-    $("#fillFormModal-closeOnX").click(function() {
-        $("#fillFormModal").hide();
-    });
-    
-    // Upon click of get quote
-    $(".get-free-quote-class").click(function() {
-        console.log("clicked");
-    });
-    
-    
-});
-</script>
-
 </head>
 
 <body data-spy="scroll" data-target=".navbar-fixed-top">
@@ -138,8 +99,8 @@ $(document).ready(function() {
                     <img src="images/slider-img1.jpg" />
                     <div class="slide-info">
                         <div class="slide-con">
-                            <b>Homecare</b>
-                            <h3>Home Insurance</h3>
+                            <b>Lifecare</b>
+                            <h3>Life Insurance</h3>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit fringilla ligula, nec congue leo pharetra in.</p>
                             <a href="#" class="ti-arrow-right"></a>
                         </div>
@@ -149,8 +110,8 @@ $(document).ready(function() {
                     <img src="images/slider-img2.jpg" />
                     <div class="slide-info">
                         <div class="slide-con">
-                            <b>Lifecare</b>
-                            <h3>Life Insurance</h3>
+                            <b>Healthcare</b>
+                            <h3>Travel Insurance</h3>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit fringilla ligula, nec congue leo pharetra in.</p>
                             <a href="#" class="ti-arrow-right"></a>
                         </div>
@@ -160,32 +121,9 @@ $(document).ready(function() {
         </section>
         <div class="container">
             <div class="row">
-                <section class="col-sm-7 col-md-8 col-lg-8">
-                    <div class="intro">
-                        <h2>Welcome to Insurance Express</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent orci nisi, porta sed diam id, venenatis dignissim urna. Duis sit amet eros a sem viverra mollis nec eu sem. Quisque rutporta sed diam id, venenatis dignissim urna. Duis sit amet eros a sem viver uisque rurum euismod fermentum.</p>
-                        <ul class="row">
-                            <li class="col-sm-4">
-                                <i class="fa fa-life-ring"></i>
-                                <h3>27x7 Support</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur.</p>
-                            </li>
-                            <li class="col-sm-4">
-                                <i class="ti-marker-alt"></i>
-                                <h3>Easy Claim system</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur.</p>
-                            </li>
-                            <li class="col-sm-4">
-                                <i class="ti-email"></i>
-                                <h3>Get Started with us</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur.</p>
-                            </li>
-                        </ul>
-                    </div>
-                </section>
                 <section class="col-sm-5 col-md-4 col-lg-4">
                     <div class="get-quote-form">
-                        <h2>Get a free quote</h2>
+                        <h2>Get a free quote form</h2>
                         <form id="get-quote">
                             <div>
                                 <input type="text" name="name" placeholder="Your Name" />
@@ -199,14 +137,14 @@ $(document).ready(function() {
                             <div class="form-select">
                                 <span></span>
                                 <select>
-                                    <option>Health</option>
+                                    <option>Product</option>
                                 </select>
                             </div>
                             <div>
                                 <textarea rows="1" cols="1" placeholder="Message"></textarea>
                             </div>
                             <div class="text-center">
-                                <a class="btn-default get-free-quote-class" href="select-plan">Get Free Quote</a>
+                                <input type="submit" class="btn-default" value="Get Free Quote" />
                             </div>
                         </form>
                     </div>
@@ -221,7 +159,7 @@ $(document).ready(function() {
                         <ul class="resp-tabs-list hor_1 col-sm-3 col-md-3 col-lg-3">
                             <li><i class="ti-home"></i> House Insurance</li>
                             <li><i class="fa fa-plane"></i> Travel Insurance</li>
-                            <li><i class="ti-heart-broken"></i> Health Insurance</li>
+                            <li><i class="ti-heart-broken"></i> Life Insurance</li>
                             <li><i class="ti-car"></i> Car Insurance</li>
                         </ul>
                         <div class="col-sm-5 col-md-5 col-lg-5 resp-tabs-container hor_1">
@@ -237,7 +175,7 @@ $(document).ready(function() {
                                         <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
                                     </p>
                                     <p>
-                                        <a class="btn-default" href="#">Get Free Quote</a>
+                                        <a class="btn-default" href="product-houseinsurance">Get Free Quote</a>
                                     </p>
                                 </div>
                                 <img src="images/product-img.jpg" alt="" class="img-responsive" />
@@ -263,7 +201,7 @@ $(document).ready(function() {
                                 <div class="prod-tab-content">
                                     <h4>
                                         <span class="prod-cion"><i class="ti-heart-broken"></i></span>
-                                        Health Insurance
+                                        Life Insurance
                                     </h4>
                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna, euismod ut ornare non, volutpat vel tortor. Integer</p>
                                     <p>et placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. </p>
@@ -271,7 +209,7 @@ $(document).ready(function() {
                                         <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
                                     </p>
                                     <p>
-                                        <a class="btn-default open-fill-form-class" href="#">Get Free Quote</a>
+                                        <a class="btn-default" href="#">Get Free Quote</a>
                                     </p>
                                 </div>
                                 <img src="images/3.jpg" alt="" class="img-responsive" />
@@ -288,7 +226,7 @@ $(document).ready(function() {
                                         <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
                                     </p>
                                     <p>
-                                        <a class="btn-default" href="#">Get Free Quote</a>
+                                        <a class="btn-default" href="fill-form">Get Free Quote</a>
                                     </p>
                                 </div>
                                 <img src="images/2.jpg" alt="" class="img-responsive" />
@@ -600,55 +538,15 @@ $(document).ready(function() {
             </div>
         </div>
     </footer>
-    
-    <!-- fillFormModal -->
-    <div class="modal" id="fillFormModal">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-            
-        <!-- Modal Header -->
-        <div class="modal-header">
-            <h4><b>Get a free quote</b></h4>
-            <button type="button" class="close" data-dismiss="modal" id="fillFormModal-closeOnX">&times;</button>
-        </div>
-        
-        <!-- Modal body -->
-        <div class="modal-body" id="fillForm_modalBody">
-            <form id="get-quote-modal">
-                <div>
-                    <input type="text" name="name" placeholder="Your Name" />
-                </div>
-                <div>
-                     <input type="text" name="email" placeholder="Email" />
-                </div>
-                <div>
-                     <input type="text" name="ph-no" placeholder="Phone no" />
-                </div>
-                <div class="form-select">
-                    <span></span>
-                    <select>
-                        <option>Product</option>
-                    </select>
-                </div>
-                <div>
-                    <textarea rows="1" cols="1" placeholder="Message"></textarea>
-                </div>
-                <div class="text-center">
-                    <!-- <input type="submit" class="btn-default get-free-quote-class" value="Get Free Quote"/> -->
-                    <a class="btn-default get-free-quote-class" href="select-plan">Get Free Quote</a>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal" id="fillFormModal-close">Close</button>
-        </div>
-        
-    </div>
-    </div>
-    </div>
-    <!-- End fillFormModal -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+    <script src="js/jquery.flexslider-min.js"></script>
+    <script src="js/easyResponsiveTabs.js"></script>
+    <script src="js/owl.carousel.js"></script>
+    <script src="js/custom.js"></script>
 </body>
 
 </html>
