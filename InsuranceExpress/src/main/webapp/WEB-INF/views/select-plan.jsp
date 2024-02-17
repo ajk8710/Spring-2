@@ -95,147 +95,15 @@
                         </div>
                     </div>
                 </li>
-                <li>
-                    <img src="images/slider-img1.jpg" />
-                    <div class="slide-info">
-                        <div class="slide-con">
-                            <b>Lifecare</b>
-                            <h3>Life Insurance</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit fringilla ligula, nec congue leo pharetra in.</p>
-                            <a href="#" class="ti-arrow-right"></a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <img src="images/slider-img2.jpg" />
-                    <div class="slide-info">
-                        <div class="slide-con">
-                            <b>Healthcare</b>
-                            <h3>Travel Insurance</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris hendrerit fringilla ligula, nec congue leo pharetra in.</p>
-                            <a href="#" class="ti-arrow-right"></a>
-                        </div>
-                    </div>
-                </li>
             </ul>
         </section>
         <div class="container">
             <div class="row">
-                <section class="col-sm-5 col-md-4 col-lg-4">
-                    <div class="get-quote-form">
-                        <h2>Get a free quote form</h2>
-                        <form id="get-quote">
-                            <div>
-                                <input type="text" name="name" placeholder="Your Name" />
-                            </div>
-                            <div>
-                                <input type="text" name="email" placeholder="Email" />
-                            </div>
-                            <div>
-                                <input type="text" name="ph-no" placeholder="Phone no" />
-                            </div>
-                            <div class="form-select">
-                                <span></span>
-                                <select>
-                                    <option>Product</option>
-                                </select>
-                            </div>
-                            <div>
-                                <textarea rows="1" cols="1" placeholder="Message"></textarea>
-                            </div>
-                            <div class="text-center">
-                                <input type="submit" class="btn-default" value="Get Free Quote" />
-                            </div>
-                        </form>
-                    </div>
-                </section>
-            </div>
-        </div>
-        <section class="product-tab">
-            <div class="container">
-                <div class="row">
-                    <div id="parentVerticalTab">
-                        <h2>Products</h2>
-                        <ul class="resp-tabs-list hor_1 col-sm-3 col-md-3 col-lg-3">
-                            <li><i class="ti-home"></i> House Insurance</li>
-                            <li><i class="fa fa-plane"></i> Travel Insurance</li>
-                            <li><i class="ti-heart-broken"></i> Life Insurance</li>
-                            <li><i class="ti-car"></i> Car Insurance</li>
-                        </ul>
-                        <div class="col-sm-5 col-md-5 col-lg-5 resp-tabs-container hor_1">
-                            <div>
-                                <div class="prod-tab-content">
-                                    <h4>
-                                        <span class="prod-cion"><i class="ti-home"></i></span>
-                                        House Insurance
-                                    </h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna, euismod ut ornare non, volutpat vel tortor. Integer</p>
-                                    <p>et placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. </p>
-                                    <p class="tel">
-                                        <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
-                                    </p>
-                                    <p>
-                                        <a class="btn-default" href="product-houseinsurance">Get Free Quote</a>
-                                    </p>
-                                </div>
-                                <img src="images/product-img.jpg" alt="" class="img-responsive" />
-                            </div>
-                            <div>
-                                <div class="prod-tab-content">
-                                    <h4>
-                                        <span class="prod-cion"><i class="fa fa-plane"></i></span>
-                                        Travel Insurance
-                                    </h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna, euismod ut ornare non, volutpat vel tortor. Integer</p>
-                                    <p>et placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. </p>
-                                    <p class="tel">
-                                        <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
-                                    </p>
-                                    <p>
-                                        <a class="btn-default" href="#">Get Free Quote</a>
-                                    </p>
-                                </div>
-                                <img src="images/1.jpg" alt="" class="img-responsive" />
-                            </div>
-                            <div>
-                                <div class="prod-tab-content">
-                                    <h4>
-                                        <span class="prod-cion"><i class="ti-heart-broken"></i></span>
-                                        Life Insurance
-                                    </h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna, euismod ut ornare non, volutpat vel tortor. Integer</p>
-                                    <p>et placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. </p>
-                                    <p class="tel">
-                                        <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
-                                    </p>
-                                    <p>
-                                        <a class="btn-default" href="#">Get Free Quote</a>
-                                    </p>
-                                </div>
-                                <img src="images/3.jpg" alt="" class="img-responsive" />
-                            </div>
-                            <div>
-                                <div class="prod-tab-content">
-                                    <h4>
-                                        <span class="prod-cion"><i class="ti-car"></i></span>
-                                        Car Insurance
-                                    </h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna, euismod ut ornare non, volutpat vel tortor. Integer</p>
-                                    <p>et placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. </p>
-                                    <p class="tel">
-                                        <i class="fa fa-phone"></i> +123 456 7890 <span>Toll Free</span>
-                                    </p>
-                                    <p>
-                                        <a class="btn-default" href="fill-form">Get Free Quote</a>
-                                    </p>
-                                </div>
-                                <img src="images/2.jpg" alt="" class="img-responsive" />
-                            </div>
-                        </div>
-                    </div>
+                <div class="get-quote-form">
+                    <h2>Select Plans Here</h2>
                 </div>
             </div>
-        </section>
+        </div>
         <section class="services">
             <h2 class="text-center">Our Best Services</h2>
             <div class="container">
